@@ -20,3 +20,4 @@ class PicPicFrame(QWidget):
 
         self.lay.addWidget(self.sep)
         self.lay.addWidget(self.list)
+

@@ -43,7 +43,7 @@ class Window(QWidget):
         self.opacity.valueChanged.connect(self.change_opacity)
 
     def handleClearView(self):
-        shape_core = picpic_entities.PicPicFree()
+        shape_core = picpic_entities.PicPicFreeCore()
         shape = picpic_shape_controlers.PicPicFreeDraw(core=shape_core)
         shape.setZValue(1000)
         self.view.shape.append(shape)
@@ -82,7 +82,8 @@ class View(QGraphicsView):
         self.bck.setZValue(-1000)
         self.bck.setOffset( -0.5 * QPointF( self.img.width(), self.img.height() ) )
 
-        self.circle = picpic_shape_controlers.PicPicRect(QPoint(0, 0), QPoint(100, 100), core=picpic_entities.PicPicShape)
+        core = picpic_entities.PicPicShapeCore()
+        self.circle = picpic_shape_controlers.PicPicRect(QPoint(0, 0), QPoint(100, 100), core=core)
 
         self.start_draw = False
         self.shape = []

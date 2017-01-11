@@ -3,7 +3,7 @@ from PySide.QtCore import *
 from picpic_entities import *
 
 class PicPicShape(QGraphicsItem):
-    def __init__(self, core=PicPicFree):
+    def __init__(self, core=PicPicFreeCore):
         super(PicPicShape, self).__init__()
         #all flags
         self.setFlags(
@@ -90,7 +90,7 @@ class PicPicRect(PicPicShape):
 class PicPicFreeDraw(PicPicShape):
     def __init__(self, core):
         super(PicPicFreeDraw, self).__init__(core=core)
-        if not type(core) == PicPicFree:
+        if not type(core) == PicPicFreeCore:
             raise TypeError("core must be type PicPicFree")
         self.core.path = QPainterPath()
         self.core.color = QColor(255,255,0)
