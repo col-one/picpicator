@@ -1,11 +1,12 @@
 
 COLOR = "color"
-
+STRING = "string"
 
 class PicPicShapeCore(object):
     def __init__(self):
         super(PicPicShapeCore, self).__init__()
-        self.name = None
+        self.name = Property()
+        self.name.type = STRING
         self.color = Property()
         self.color.type = COLOR
         self.pen_color = Property()

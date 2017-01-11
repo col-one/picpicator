@@ -12,12 +12,8 @@ class Window(QWidget):
         self.view = View(self)
         self.button = QPushButton('Add Shape', self)
         self.buttonc = QPushButton('Color', self)
-        self.opacity = QSlider(Qt.Horizontal)
 
         create_lay = picpic_create_controlers.PicPicToolsUi()
-        create_lay.setMaximumHeight(125)
-        create_lay.setMinimumWidth(200)
-        create_lay.setMinimumHeight(125)
 
         color_lay = picpic_create_controlers.PicPicColorUi()
 
@@ -30,17 +26,12 @@ class Window(QWidget):
         lay_right.addWidget(create_lay)
         lay_right.addWidget(color_lay)
         lay_right.addWidget(editor)
-        lay_right.addWidget(self.opacity)
-        self.opacity.setMinimum(0)
-        self.opacity.setMaximum(255)
 
         layout = QHBoxLayout(self)
         layout.addWidget(self.view)
         layout.addWidget(widget_right)
 
         self.button.clicked.connect(self.handleClearView)
-        self.buttonc.clicked.connect(self.change_color)
-        self.opacity.valueChanged.connect(self.change_opacity)
 
     def handleClearView(self):
         shape_core = picpic_entities.PicPicFreeCore()
@@ -51,9 +42,6 @@ class Window(QWidget):
         self.view.scene().addItem(self.view.shape[self.view.id])
         shape.setParentItem(self.view.bck)
         self.view.start_draw = True
-
-    def change_color(self):
-        self.view.scene().selectedItems()[0].color = QColor(255, 255, 255)
 
     def change_opacity(self):
         #for item in self.view.scene().selectedItems():

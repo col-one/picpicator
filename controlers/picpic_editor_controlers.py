@@ -15,6 +15,8 @@ class PicPicFrame(QWidget):
         super(PicPicFrame, self).__init__()
         self.lay = QVBoxLayout(self)
         self.lay.setAlignment(Qt.AlignTop)
+        self.setFixedWidth(200)
+
         self.sep = QHLine()
 
         self.list = QListWidget()

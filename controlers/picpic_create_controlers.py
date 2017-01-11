@@ -53,6 +53,7 @@ class PicPicToolsUi(QWidget):
         #overide
         self.grid_layout.setSpacing(0)
         self.grid_layout.setContentsMargins(0,0,0,0)
+        self.setFixedSize(200, 125)
         #connect
         self.rect_btn.clicked.connect(self.click_rect_btn)
         self.circle_btn.clicked.connect(self.click_circle_btn)
