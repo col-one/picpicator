@@ -1,8 +1,9 @@
 from PySide.QtCore import *
 from PySide.QtGui import *
-
+import sys
 import picpic_entities
-from controlers import picpic_shape_controlers
+from controlers import picpic_shape_controlers,\
+    picpic_create_controlers, picpic_editor_controlers
 
 
 class Window(QWidget):
@@ -13,12 +14,23 @@ class Window(QWidget):
         self.buttonc = QPushButton('Color', self)
         self.opacity = QSlider(Qt.Horizontal)
 
+        create_lay = picpic_create_controlers.PicPicToolsUi()
+        create_lay.setMaximumHeight(125)
+        create_lay.setMinimumWidth(200)
+        create_lay.setMinimumHeight(125)
+
+        color_lay = picpic_create_controlers.PicPicColorUi()
+
+
+        editor = picpic_editor_controlers.PicPicFrame()
+
+
         widget_right = QWidget(self)
         lay_right = QVBoxLayout(widget_right)
-        lay_right.addWidget(self.button)
-        lay_right.addWidget(self.buttonc)
+        lay_right.addWidget(create_lay)
+        lay_right.addWidget(color_lay)
+        lay_right.addWidget(editor)
         lay_right.addWidget(self.opacity)
-
         self.opacity.setMinimum(0)
         self.opacity.setMaximum(255)
 
