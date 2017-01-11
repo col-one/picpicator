@@ -7,6 +7,7 @@ class QHLine(QFrame):
         self.setFrameShape(QFrame.HLine)
         self.setFrameShadow(QFrame.Sunken)
         self.setFixedHeight(20)
+        self.setContentsMargins(0,0,0,0)
 
 
 class PicPicFrame(QWidget):
@@ -21,3 +22,5 @@ class PicPicFrame(QWidget):
         self.lay.addWidget(self.sep)
         self.lay.addWidget(self.list)
 
+        self.lay.setSpacing(0)
+        self.lay.setContentsMargins(0,0,0,0)

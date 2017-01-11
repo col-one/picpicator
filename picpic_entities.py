@@ -1,12 +1,17 @@
 
+COLOR = "color"
+
 
 class PicPicShapeCore(object):
     def __init__(self):
         super(PicPicShapeCore, self).__init__()
         self.name = None
         self.color = Property()
-        self.pen_color = None
-        self.over_color = None
+        self.color.type = COLOR
+        self.pen_color = Property()
+        self.pen_color.type = COLOR
+        self.over_color = Property()
+        self.over_color.type = COLOR
         self.click_color = None
         self.vertex = []
         self.action = None
@@ -22,15 +27,23 @@ class PicPicFreeCore(PicPicShapeCore):
 
 class Property(object):
     def __init__(self):
-        self.value = None
+        self.valid_type = ["color", "string", "bool", "int", "float"]
+        self._x = None
+        self._type = None
 
-    def __get__(self, instance, owner):
-        return self.value
+    def getx(self):
+        return self._x
 
-    def __set__(self, instance, value):
-        print "prop setted"
-        self.value = value
+    def setx(self, value):
+        self._x = value
 
-    def set(self, value):
-        print "prop setted"
-        self.value = value
+    def gettype(self):
+        return self._type
+
+    def settype(self, type):
+        if not type in self.valid_type:
+            raise TypeError("Type must be color, string, bool, int, float")
+        self._type = type
+
+    value = property(getx, setx)
+    type = property(gettype, settype)

@@ -1,6 +1,7 @@
 from PySide.QtCore import *
 from PySide.QtGui import *
 import copy
+
 class PicPicButton(QPushButton):
     def __init__(self, *args, **kwargs):
         super(PicPicButton, self).__init__(*args, **kwargs)
@@ -57,8 +58,6 @@ class PicPicToolsUi(QWidget):
         self.circle_btn.clicked.connect(self.click_circle_btn)
         self.free_btn.clicked.connect(self.click_free_btn)
         self.btn_1.clicked.connect(self.click_btn_1)
-
-
 
     def click_rect_btn(self):
         pass
