@@ -1,9 +1,9 @@
-import copy
-from PySide.QtGui import *
 from PySide.QtCore import *
+from PySide.QtGui import *
 
 import picpic_entities
-import picpic_controlers
+from controlers import picpic_shape_controlers
+
 
 class Window(QWidget):
     def __init__(self):
@@ -32,7 +32,7 @@ class Window(QWidget):
 
     def handleClearView(self):
         shape_core = picpic_entities.PicPicFree()
-        shape = picpic_controlers.PicPicFreeDraw(core=shape_core)
+        shape = picpic_shape_controlers.PicPicFreeDraw(core=shape_core)
         shape.setZValue(1000)
         self.view.shape.append(shape)
         self.view.id += 1
@@ -70,7 +70,7 @@ class View(QGraphicsView):
         self.bck.setZValue(-1000)
         self.bck.setOffset( -0.5 * QPointF( self.img.width(), self.img.height() ) )
 
-        self.circle = picpic_controlers.PicPicRect(QPoint(0,0), QPoint(100,100), core=picpic_entities.PicPicShape)
+        self.circle = picpic_shape_controlers.PicPicRect(QPoint(0, 0), QPoint(100, 100), core=picpic_entities.PicPicShape)
 
         self.start_draw = False
         self.shape = []
