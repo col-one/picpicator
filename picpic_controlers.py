@@ -3,7 +3,7 @@ from PySide.QtCore import *
 from picpic_entities import *
 
 class PicPicShape(QGraphicsItem):
-    def __init__(self, core=PicPicShape):
+    def __init__(self, core=PicPicFree):
         super(PicPicShape, self).__init__()
         #all flags
         self.setFlags(
@@ -16,10 +16,19 @@ class PicPicShape(QGraphicsItem):
         self.core=core
         self.cc_over_color = QColor(255, 255, 255, 150)
         self.cc_select_color = QColor(255, 255, 255, 100)
-        self.core.pen_color = QColor(0,0,0,255)
+        self.core.pen_color = QColor(0,0,0,0)
+        self.core.pen_width = 4
+        self.core.over_color = QColor(255, 255, 255, 255)
         self.bb_rect = QRect()
         self.hovered = False
+        self.pen = QPen()
+        self.cc_hover_pen = QPen()
+        self.cc_hover_pen_width = 2
 
+
+        #override
+        self.pen.setColor(self.core.pen_color)
+        self.pen.setWidth(self.core.pen_width)
         #graphicsitems attributes
         self.setAcceptHoverEvents(True)
 
@@ -27,15 +36,14 @@ class PicPicShape(QGraphicsItem):
         return self.bb_rect
 
     def paint(self, painter, option, widget):
-        pen = QPen()
-        pen.setWidth(4)
+        self.cc_hover_pen.setWidth(self.cc_hover_pen_width)
         if self.hovered:
-            pen.setColor(self.cc_over_color)
+            self.cc_hover_pen.setColor(self.cc_over_color)
         elif self.isSelected():
-            pen.setColor(self.cc_select_color)
+            self.cc_hover_pen.setColor(self.cc_select_color)
         else:
-            pen.setColor(self.core.pen_color)
-        painter.setPen(pen)
+            self.cc_hover_pen.setColor(self.core.pen_color)
+        painter.setPen(self.cc_hover_pen)
         painter.drawRect(self.bb_rect)
         self.scene().update()
 
@@ -78,3 +86,33 @@ class PicPicRect(PicPicShape):
         super(PicPicRect, self).paint(painter, option, widget)
         painter.setBrush(self.core.color)
         painter.drawRect(self.rect)
+
+class PicPicFreeDraw(PicPicShape):
+    def __init__(self, core):
+        super(PicPicFreeDraw, self).__init__(core=core)
+        if not type(core) == PicPicFree:
+            raise TypeError("core must be type PicPicFree")
+        self.core.path = QPainterPath()
+        self.core.color = QColor(255,255,0)
+
+    def start_draw(self, point):
+        self.core.vertex.append(point)
+        self.core.path.moveTo(point)
+
+    def add_line(self, point):
+        self.core.vertex.append(point)
+        self.core.path.lineTo(point)
+
+    def end_draw(self):
+        self.core.vertex.append(self.core.path.pointAtPercent(0.0))
+        self.core.path.closeSubpath()
+        self.bb_rect = self.mapRectToScene(self.core.path.controlPointRect())
+
+    def paint(self, painter, option, widget):
+        super(PicPicFreeDraw, self).paint(painter, option, widget)
+        painter.setPen(Qt.NoPen)
+        if self.hovered:
+            painter.setBrush(self.core.over_color)
+        else:
+            painter.setBrush(self.core.color)
+        painter.drawPath(self.core.path)

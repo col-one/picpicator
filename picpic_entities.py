@@ -8,9 +8,10 @@ class PicPicShape(object):
         self.pen_color = None
         self.over_color = None
         self.click_color = None
-        self.vertex = None
+        self.vertex = []
         self.action = None
         self.selected = None
+        self.pen_width = None
 
 class PicPicFree(PicPicShape):
     def __init__(self):

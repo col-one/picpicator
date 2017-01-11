@@ -31,7 +31,8 @@ class Window(QWidget):
         self.opacity.valueChanged.connect(self.change_opacity)
 
     def handleClearView(self):
-        shape = Shape()
+        shape_core = picpic_entities.PicPicFree()
+        shape = picpic_controlers.PicPicFreeDraw(core=shape_core)
         shape.setZValue(1000)
         self.view.shape.append(shape)
         self.view.id += 1
@@ -64,7 +65,7 @@ class View(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.bck = QGraphicsPixmapItem()
-        self.img = QPixmap("./refere.png")
+        self.img = QPixmap("./Jadina_Fond.jpg")
         self.bck.setPixmap(self.img)
         self.bck.setZValue(-1000)
         self.bck.setOffset( -0.5 * QPointF( self.img.width(), self.img.height() ) )
@@ -90,17 +91,17 @@ class View(QGraphicsView):
     def mousePressEvent(self, event):
         if not self.start_draw:
             return QGraphicsView.mousePressEvent(self, event)
-        if self.shape[self.id].first_point:
-            self.shape[self.id].start_point(self.mapToScene(event.pos()))
-            self.shape[self.id].set_bounding(self.mapToScene(event.pos()))
+        if len(self.shape[self.id].core.vertex) == 0:
+            self.shape[self.id].start_draw(self.mapToScene(event.pos()))
+            #self.shape[self.id].set_bounding(self.mapToScene(event.pos()))
         else:
-            self.shape[self.id].add_point(self.mapToScene(event.pos()))
+            self.shape[self.id].add_line(self.mapToScene(event.pos()))
         QGraphicsView.mousePressEvent(self, event)
 
     def keyPressEvent(self, event):
         super(View, self).keyPressEvent(event)
         if event.key() == Qt.Key_Return:
-            self.shape[self.id].close_path()
+            self.shape[self.id].end_draw()
             self.start_draw = False
             print self.shape[self.id].vertex
 
