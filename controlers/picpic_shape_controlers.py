@@ -1,6 +1,11 @@
-from PySide.QtGui import *
 from PySide.QtCore import *
-from picpic_entities import *
+from PySide.QtGui import *
+
+from entities.picpic_entities import *
+from controlers.picpic_editor_controlers import *
+
+class PicSignal(QObject):
+    fired = Signal(list)
 
 class PicPicShape(QGraphicsItem):
     def __init__(self, core=PicPicFreeCore):
@@ -12,23 +17,26 @@ class PicPicShape(QGraphicsItem):
             QGraphicsItem.ItemIsMovable |
             QGraphicsItem.ItemSendsGeometryChanges
         )
+        self.signal = PicSignal()
         #attributes
         self.core=core
         self.cc_over_color = QColor(255, 255, 255, 150)
         self.cc_select_color = QColor(255, 255, 255, 100)
         self.core.pen_color.value = QColor(0,0,0,0)
-        self.core.pen_width = 4
+        self.core.pen_width.value = 4
         self.core.over_color.value = QColor(255, 255, 255, 255)
         self.bb_rect = QRect()
         self.hovered = False
         self.pen = QPen()
         self.cc_hover_pen = QPen()
         self.cc_hover_pen_width = 2
+        self.cc_click_action = (PicPicAttrGen, self.core)
+        self.attr_widgets = []
 
 
         #override
         self.pen.setColor(self.core.pen_color.value)
-        self.pen.setWidth(self.core.pen_width)
+        self.pen.setWidth(self.core.pen_width.value)
         #graphicsitems attributes
         self.setAcceptHoverEvents(True)
 
@@ -53,6 +61,10 @@ class PicPicShape(QGraphicsItem):
     def hoverLeaveEvent(self, event):
         self.hovered = False
 
+    def mousePressEvent(self, event):
+        ret = self.cc_click_action[0](self.cc_click_action[1])
+        self.attr_widgets = ret
+        self.signal.fired.emit(self.attr_widgets)
 
 class PicPicCircle(PicPicShape):
     def __init__(self, center, radius, core):
@@ -95,15 +107,15 @@ class PicPicFreeDraw(PicPicShape):
         self.core.color.value = QColor(255,255,0)
 
     def start_draw(self, point):
-        self.core.vertex.append(point)
+        self.core.vertex.value = point
         self.core.path.moveTo(point)
 
     def add_line(self, point):
-        self.core.vertex.append(point)
+        self.core.vertex.value = point
         self.core.path.lineTo(point)
 
     def end_draw(self):
-        self.core.vertex.append(self.core.path.pointAtPercent(0.0))
+        self.core.vertex.value = self.core.path.pointAtPercent(0.0)
         self.core.path.closeSubpath()
         self.bb_rect = self.mapRectToScene(self.core.path.controlPointRect())
 

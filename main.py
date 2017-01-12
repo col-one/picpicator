@@ -1,9 +1,11 @@
+import sys
+
 from PySide.QtCore import *
 from PySide.QtGui import *
-import sys
-import picpic_entities
-from controlers import picpic_shape_controlers,\
-    picpic_create_controlers, picpic_editor_controlers
+
+from controlers import picpic_shape_controlers, picpic_create_controlers, picpic_editor_controlers
+from controlers.picpic_editor_controlers import PicPicAttrGen
+from entities import picpic_entities
 
 
 class Window(QWidget):
@@ -18,20 +20,25 @@ class Window(QWidget):
         color_lay = picpic_create_controlers.PicPicColorUi()
 
 
-        editor = picpic_editor_controlers.PicPicFrame()
+        self.editor = picpic_editor_controlers.PicPicFrame()
 
 
         widget_right = QWidget(self)
         lay_right = QVBoxLayout(widget_right)
         lay_right.addWidget(create_lay)
         lay_right.addWidget(color_lay)
-        lay_right.addWidget(editor)
+        lay_right.addWidget(self.editor)
 
         layout = QHBoxLayout(self)
         layout.addWidget(self.view)
         layout.addWidget(widget_right)
 
         self.button.clicked.connect(self.handleClearView)
+        self.view.scene().items()[0].signal.fired.connect(self.pop)
+
+    @Slot(list)
+    def pop(self, event):
+        self.editor.populate_attr(event)
 
     def handleClearView(self):
         shape_core = picpic_entities.PicPicFreeCore()
@@ -87,7 +94,6 @@ class View(QGraphicsView):
         self.setScene(self.scene_)
         self.scene_.addItem(self.bck)
         self.scene_.addItem(self.circle)
-
 
     def mousePressEvent(self, event):
         if not self.start_draw:

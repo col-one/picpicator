@@ -1,6 +1,8 @@
 
 COLOR = "color"
 STRING = "string"
+FLOAT = "float"
+LIST = "list"
 
 class PicPicShapeCore(object):
     def __init__(self):
@@ -13,11 +15,16 @@ class PicPicShapeCore(object):
         self.pen_color.type = COLOR
         self.over_color = Property()
         self.over_color.type = COLOR
-        self.click_color = None
-        self.vertex = []
+        self.opacity = Property(0)
+        self.opacity.type = FLOAT
+        self.click_color = Property(255,255,255)
+        self.click_color.type = COLOR
+        self.vertex = Property()
+        self.vertex.type = LIST
         self.action = None
         self.selected = None
-        self.pen_width = None
+        self.pen_width = Property()
+        self.pen_width.type = FLOAT
 
 class PicPicFreeCore(PicPicShapeCore):
     def __init__(self):
@@ -27,16 +34,22 @@ class PicPicFreeCore(PicPicShapeCore):
         self.path = None
 
 class Property(object):
-    def __init__(self):
-        self.valid_type = ["color", "string", "bool", "int", "float"]
-        self._x = None
+    def __init__(self, *args):
+        self.valid_type = ["color", "string", "bool", "int", "float", "list"]
+        if len(args) == 1:
+            self._x = args[0]
+        else:
+            self._x = args
         self._type = None
 
     def getx(self):
         return self._x
 
     def setx(self, value):
-        self._x = value
+        if self._type == LIST:
+            self._x.append(value)
+        else:
+            self._x = value
 
     def gettype(self):
         return self._type
