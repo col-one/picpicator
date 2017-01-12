@@ -8,8 +8,8 @@ class QHLine(QFrame):
     def __init__(self):
         super(QHLine, self).__init__()
         self.setFrameShape(QFrame.HLine)
-        # self.setFrameShadow(QFrame.Sunken)
-        self.setFixedHeight(10)
+        self.setFrameShadow(QFrame.Sunken)
+        self.setFixedHeight(1)
         self.setContentsMargins(0,0,0,0)
 
 
@@ -19,27 +19,41 @@ class PicPicFrame(QWidget):
         self.lay = QVBoxLayout(self)
         self.lay.setAlignment(Qt.AlignTop)
         self.setFixedWidth(200)
-
         self.sep = QHLine()
 
-        self.list = QListWidget()
-        #self.list.setStyleSheet("background-color: #455122")
-        self.list.setSpacing(0)
-        self.list.setContentsMargins(0,0,0,0)
+        # self.list = QListWidget()
+        # #self.list.setStyleSheet("background-color: #444444")
+        # self.list.setSpacing(0)
+        # self.list.setContentsMargins(0,0,0,0)
 
-        self.lay.addWidget(self.sep)
-        self.lay.addWidget(self.list)
+        #self.lay.addWidget(self.sep)
+        #self.lay.addWidget(self.list)
 
         self.lay.setSpacing(0)
         self.lay.setContentsMargins(0,0,0,0)
 
     def populate_attr(self, attr_widgets):
-        self.list.clear()
+        self.delete_attr_panel()
         for widget in attr_widgets:
-            item = QListWidgetItem()
-            item.setSizeHint(QSize(180, 65))
-            self.list.addItem(item)
-            self.list.setItemWidget(item, widget)
+            self.lay.addWidget(widget)
+            self.sep = QHLine()
+            self.lay.addWidget(self.sep)
+
+    def delete_attr_panel(self):
+        for i in reversed(range(self.lay.count())):
+            wi = self.lay.itemAt(i).widget()
+            self.lay.removeWidget(wi)
+            wi.setParent(None)
+            del wi
+
+    def paintEvent(self, event):
+        painter = QPainter()
+        painter.begin(self)
+        painter.setPen(QColor(120,120,120,255))
+        rect = self.rect()
+        rect.adjust(0,0,-1,-1)
+        painter.drawRect(rect)
+        painter.end()
 
 def PicPicAttrGen(core):
     all_attr = core.__dict__
@@ -55,6 +69,6 @@ def PicPicAttrGen(core):
         elif _type == COLOR:
             widget = PicPicColor(all_attr[label], label)
         else:
-            widget = None
+            widget = QWidget()
         widgets_attr.append(widget)
     return widgets_attr

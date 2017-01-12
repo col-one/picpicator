@@ -2,6 +2,7 @@ import sys
 
 from PySide.QtCore import *
 from PySide.QtGui import *
+import qdarkstyle
 
 from controlers import picpic_shape_controlers, picpic_create_controlers, picpic_editor_controlers
 from controlers.picpic_editor_controlers import PicPicAttrGen
@@ -198,6 +199,7 @@ if __name__ == '__main__':
 
     import sys
     app = QApplication(sys.argv)
+    #app.setStyleSheet(qdarkstyle.load_stylesheet())
     window = Window()
     window.resize(640, 480)
     window.show()

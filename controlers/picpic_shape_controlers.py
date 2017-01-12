@@ -91,7 +91,7 @@ class PicPicRect(PicPicShape):
         self.top = top
         self.rect = QRect(bottom, top)
         self.bb_rect = self.rect
-        self.core.color.value = QColor(0,0,0,255)
+        self.core.color.value = QColor(0,255,0,255)
 
     def paint(self, painter, option, widget):
         super(PicPicRect, self).paint(painter, option, widget)

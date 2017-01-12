@@ -7,7 +7,7 @@ class QHLine(QFrame):
         super(QHLine, self).__init__()
         self.setFrameShape(QFrame.HLine)
         # self.setFrameShadow(QFrame.Sunken)
-        self.setFixedHeight(10)
+        self.setFixedHeight(0)
         self.setContentsMargins(0,0,0,0)
 
 class PicPicString(QWidget):
@@ -25,8 +25,11 @@ class PicPicString(QWidget):
         self.lay.addWidget(self.text_edit)
         self.lay.addWidget(self.sep)
 
-        self.lay.setSpacing(0)
+        self.lay.setSpacing(1)
         self.setMinimumWidth(190)
+
+        #self.setStyleSheet("color: #999999")
+
 
 class PicPicFloat(QWidget):
     def __init__(self, properties, label):
@@ -53,9 +56,10 @@ class PicPicFloat(QWidget):
         self.lay.addWidget(self.sep, 2, 0)
         self.lay.addWidget(self.sep2, 2, 1)
 
-        self.lay.setSpacing(0)
+        self.lay.setSpacing(1)
         self.setMinimumWidth(190)
 
+        #self.setStyleSheet("color: #999999")
 
         self.slider.valueChanged.connect(self.link)
         self.integer.textChanged.connect(self.linkInt)
@@ -79,7 +83,7 @@ class PicPicColor(QWidget):
 
         self.label = QLabel(self.label_name + " : ")
         self.button = QPushButton()
-        self.button.setStyleSheet("background-color:{0}".format(self.color_hex))
+        self.button.setStyleSheet("background-color:{0}; border: 0px".format(self.color_hex))
         self.sep = QHLine()
 
         self.lay = QVBoxLayout(self)
@@ -88,8 +92,10 @@ class PicPicColor(QWidget):
         self.lay.addWidget(self.sep)
 
 
-        self.lay.setSpacing(0)
+        self.lay.setSpacing(1)
         self.setMinimumWidth(190)
+
+        #self.setStyleSheet("color: #999999")
 
 # import sys
 # app = QApplication(sys.argv)
