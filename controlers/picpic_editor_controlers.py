@@ -21,14 +21,6 @@ class PicPicFrame(QWidget):
         self.setFixedWidth(200)
         self.sep = QHLine()
 
-        # self.list = QListWidget()
-        # #self.list.setStyleSheet("background-color: #444444")
-        # self.list.setSpacing(0)
-        # self.list.setContentsMargins(0,0,0,0)
-
-        #self.lay.addWidget(self.sep)
-        #self.lay.addWidget(self.list)
-
         self.lay.setSpacing(0)
         self.lay.setContentsMargins(0,0,0,0)
 
@@ -59,7 +51,7 @@ def PicPicAttrGen(core):
     all_attr = core.__dict__
     widgets_attr = []
     for label in all_attr:
-        if all_attr[label] is None:
+        if all_attr[label] is None or not all_attr[label].expo :
             continue
         _type = all_attr[label].type
         if _type == STRING:
@@ -71,4 +63,5 @@ def PicPicAttrGen(core):
         else:
             widget = QWidget()
         widgets_attr.append(widget)
+        widgets_attr = sorted(widgets_attr, key=lambda x: x.expo_order)
     return widgets_attr

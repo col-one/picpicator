@@ -13,8 +13,6 @@ class Window(QWidget):
     def __init__(self):
         QWidget.__init__(self)
         self.view = View(self)
-        self.button = QPushButton('Add Shape', self)
-        self.buttonc = QPushButton('Color', self)
 
         create_lay = picpic_create_controlers.PicPicToolsUi()
 
@@ -34,7 +32,6 @@ class Window(QWidget):
         layout.addWidget(self.view)
         layout.addWidget(widget_right)
 
-        self.button.clicked.connect(self.handleClearView)
         self.view.scene().items()[0].signal.fired.connect(self.pop)
 
     @Slot(list)
@@ -96,7 +93,11 @@ class View(QGraphicsView):
         self.scene_.addItem(self.bck)
         self.scene_.addItem(self.circle)
 
+        self.circle.core.name.value += str(len(self.scene_.items())-1)
+
+
     def mousePressEvent(self, event):
+        self.parent().editor.delete_attr_panel()
         if not self.start_draw:
             return QGraphicsView.mousePressEvent(self, event)
         if len(self.shape[self.id].core.vertex) == 0:

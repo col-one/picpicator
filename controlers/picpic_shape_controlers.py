@@ -65,6 +65,8 @@ class PicPicShape(QGraphicsItem):
         ret = self.cc_click_action[0](self.cc_click_action[1])
         self.attr_widgets = ret
         self.signal.fired.emit(self.attr_widgets)
+        QGraphicsItem.mousePressEvent(self, event)
+
 
 class PicPicCircle(PicPicShape):
     def __init__(self, center, radius, core):
@@ -86,7 +88,6 @@ class PicPicCircle(PicPicShape):
 class PicPicRect(PicPicShape):
     def __init__(self, bottom, top, core):
         super(PicPicRect, self).__init__(core=core)
-
         self.bottom = bottom
         self.top = top
         self.rect = QRect(bottom, top)

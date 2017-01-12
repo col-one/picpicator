@@ -7,20 +7,26 @@ LIST = "list"
 class PicPicShapeCore(object):
     def __init__(self):
         super(PicPicShapeCore, self).__init__()
-        self.name = Property()
+        self.name = Property("Shape")
         self.name.type = STRING
+        self.name.expo_order = 0
         self.color = Property()
         self.color.type = COLOR
+        self.color.expo_order = 1
         self.pen_color = Property()
         self.pen_color.type = COLOR
+        self.pen_color.expo_order = 2
         self.over_color = Property()
         self.over_color.type = COLOR
+        self.over_color.expo_order = 3
         self.opacity = Property(0)
         self.opacity.type = FLOAT
-        self.click_color = Property(255,255,255)
+        self.click_color = Property(120,200,255)
         self.click_color.type = COLOR
+        self.click_color.expo_order = 4
         self.vertex = Property()
         self.vertex.type = LIST
+        self.vertex.expo = False
         self.action = None
         self.selected = None
         self.pen_width = Property()
@@ -41,16 +47,16 @@ class Property(object):
         else:
             self._x = args
         self._type = None
+        self.expo = True
+        self.expo_order = 10
 
     def getx(self):
         return self._x
-
     def setx(self, value):
         if self._type == LIST:
             self._x.append(value)
         else:
             self._x = value
-
     def gettype(self):
         return self._type
 

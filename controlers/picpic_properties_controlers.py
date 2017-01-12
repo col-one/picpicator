@@ -10,14 +10,20 @@ class QHLine(QFrame):
         self.setFixedHeight(0)
         self.setContentsMargins(0,0,0,0)
 
-class PicPicString(QWidget):
+class PicPicAbstract(QWidget):
     def __init__(self, properties, label):
-        super(PicPicString, self).__init__()
+        super(PicPicAbstract, self).__init__()
         self.value = properties.value
         self.label_name = label
+        self.expo_order = properties.expo_order
+        self.properties = properties
+
+class PicPicString(PicPicAbstract):
+    def __init__(self, properties, label):
+        super(PicPicString, self).__init__(properties, label)
 
         self.label = QLabel(self.label_name + " : ")
-        self.text_edit = QLineEdit()
+        self.text_edit = QLineEdit(self.value)
         self.sep = QHLine()
 
         self.lay = QVBoxLayout(self)
@@ -31,12 +37,9 @@ class PicPicString(QWidget):
         #self.setStyleSheet("color: #999999")
 
 
-class PicPicFloat(QWidget):
+class PicPicFloat(PicPicAbstract):
     def __init__(self, properties, label):
-        super(PicPicFloat, self).__init__()
-        self.property = properties
-        self.value = properties.value
-        self.label_name = label
+        super(PicPicFloat, self).__init__(properties, label)
 
         self.label = QLabel(self.label_name + " : ")
         self.slider = QSlider(Qt.Horizontal)
@@ -66,17 +69,14 @@ class PicPicFloat(QWidget):
 
     def link(self):
         self.integer.setText(str(self.slider.value()))
-        self.property.value = self.integer.text()
+        self.properties.value = self.integer.text()
     def linkInt(self):
         self.slider.setValue(int(self.integer.text()))
-        self.property.value = self.integer.text()
+        self.properties.value = self.integer.text()
 
-class PicPicColor(QWidget):
+class PicPicColor(PicPicAbstract):
     def __init__(self, properties, label):
-        super(PicPicColor, self).__init__()
-        self.property = properties
-        self.value = properties.value
-        self.label_name = label
+        super(PicPicColor, self).__init__(properties, label)
         if not isinstance(self.value, QColor):
             self.value = QColor(*self.value)
         self.color_hex = self.value.name()
@@ -90,7 +90,6 @@ class PicPicColor(QWidget):
         self.lay.addWidget(self.label)
         self.lay.addWidget(self.button)
         self.lay.addWidget(self.sep)
-
 
         self.lay.setSpacing(1)
         self.setMinimumWidth(190)
