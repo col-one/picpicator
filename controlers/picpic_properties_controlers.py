@@ -1,6 +1,8 @@
 from PySide.QtCore import *
 from PySide.QtGui import *
 
+class PicSignal(QObject):
+    changed = Signal(list)
 
 class QHLine(QFrame):
     def __init__(self):
@@ -13,6 +15,7 @@ class QHLine(QFrame):
 class PicPicAbstract(QWidget):
     def __init__(self, properties, label):
         super(PicPicAbstract, self).__init__()
+        self.signal = PicSignal()
         self.value = properties.value
         self.label_name = label
         self.expo_order = properties.expo_order
@@ -34,13 +37,16 @@ class PicPicString(PicPicAbstract):
         self.lay.setSpacing(1)
         self.setMinimumWidth(190)
 
-        #self.setStyleSheet("color: #999999")
+        self.text_edit.textChanged.connect(self.send_signal)
+
+    def send_signal(self):
+        self.properties.value = self.text_edit.text()
 
 
 class PicPicFloat(PicPicAbstract):
     def __init__(self, properties, label):
         super(PicPicFloat, self).__init__(properties, label)
-
+        self.signal = PicSignal()
         self.label = QLabel(self.label_name + " : ")
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setMinimum(0)
@@ -70,6 +76,7 @@ class PicPicFloat(PicPicAbstract):
     def link(self):
         self.integer.setText(str(self.slider.value()))
         self.properties.value = self.integer.text()
+
     def linkInt(self):
         self.slider.setValue(int(self.integer.text()))
         self.properties.value = self.integer.text()

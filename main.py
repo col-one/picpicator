@@ -97,6 +97,7 @@ class View(QGraphicsView):
 
 
     def mousePressEvent(self, event):
+        print self.circle.core.name.value
         self.parent().editor.delete_attr_panel()
         if not self.start_draw:
             return QGraphicsView.mousePressEvent(self, event)
