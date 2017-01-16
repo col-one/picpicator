@@ -10,24 +10,26 @@ class PicPicShapeCore(object):
         self.name = Property("Shape")
         self.name.type = STRING
         self.name.expo_order = 0
-        self.color = Property()
+        self.action = Property("")
+        self.action.type = STRING
+        self.action.expo_order = 0.1
+        self.color = Property((122,11,11,255))
         self.color.type = COLOR
         self.color.expo_order = 1
-        self.pen_color = Property()
+        self.pen_color = Property((125,55,44))
         self.pen_color.type = COLOR
         self.pen_color.expo_order = 2
-        self.over_color = Property()
+        self.over_color = Property((122,78,45,255))
         self.over_color.type = COLOR
         self.over_color.expo_order = 3
         self.opacity = Property(0)
         self.opacity.type = FLOAT
-        self.click_color = Property(120,200,255)
+        self.click_color = Property((120,200,255))
         self.click_color.type = COLOR
         self.click_color.expo_order = 4
         self.vertex = Property()
         self.vertex.type = LIST
         self.vertex.expo = False
-        self.action = None
         self.selected = None
         self.pen_width = Property()
         self.pen_width.type = FLOAT
@@ -67,3 +69,7 @@ class Property(object):
 
     value = property(getx, setx)
     type = property(gettype, settype)
+
+def generate_randcolor():
+    import random
+    return (random.randint(0,256), random.randint(0,256), random.randint(0,256), 255)

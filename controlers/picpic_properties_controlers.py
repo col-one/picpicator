@@ -12,6 +12,22 @@ class QHLine(QFrame):
         self.setFixedHeight(0)
         self.setContentsMargins(0,0,0,0)
 
+class PicPicColorPicker(QColorDialog):
+    def __init__(self, parent):
+        super(PicPicColorPicker, self).__init__(parent)
+        self.setOption(QColorDialog.DontUseNativeDialog)
+        self.currentColorChanged.connect(self.change_color)
+        self.color = QColor(255,255,255)
+        self.show()
+
+    def implementation_change(self):
+        pass
+
+    def change_color(self, color):
+        self.color = color
+        self.implementation_change()
+
+
 class PicPicAbstract(QWidget):
     def __init__(self, properties, label):
         super(PicPicAbstract, self).__init__()
@@ -75,11 +91,11 @@ class PicPicFloat(PicPicAbstract):
 
     def link(self):
         self.integer.setText(str(self.slider.value()))
-        self.properties.value = self.integer.text()
+        self.properties.value = float(self.integer.text())
 
     def linkInt(self):
         self.slider.setValue(int(self.integer.text()))
-        self.properties.value = self.integer.text()
+        self.properties.value = float(self.integer.text())
 
 class PicPicColor(PicPicAbstract):
     def __init__(self, properties, label):
@@ -101,7 +117,16 @@ class PicPicColor(PicPicAbstract):
         self.lay.setSpacing(1)
         self.setMinimumWidth(190)
 
-        #self.setStyleSheet("color: #999999")
+        self.button.clicked.connect(self.send_signal)
+
+    def send_signal(self):
+        color_pick = PicPicColorPicker(self)
+        def set_color(color):
+            self.properties.value = color
+            self.color_hex = color.name()
+            self.button.setStyleSheet("background-color:{0}; border: 0px".format(self.color_hex))
+        color_pick.implementation_change = lambda *args : set_color(color_pick.color)
+
 
 # import sys
 # app = QApplication(sys.argv)

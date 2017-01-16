@@ -2,7 +2,6 @@ import sys
 
 from PySide.QtCore import *
 from PySide.QtGui import *
-import qdarkstyle
 
 from controlers import picpic_shape_controlers, picpic_create_controlers, picpic_editor_controlers
 from controlers.picpic_editor_controlers import PicPicAttrGen
@@ -32,7 +31,7 @@ class Window(QWidget):
         layout.addWidget(self.view)
         layout.addWidget(widget_right)
 
-        self.view.scene().items()[0].signal.fired.connect(self.pop)
+        self.view.scene().items()[1].signal.fired.connect(self.pop)
 
     @Slot(list)
     def pop(self, event):
@@ -76,7 +75,7 @@ class View(QGraphicsView):
         self.bck.setOffset( -0.5 * QPointF( self.img.width(), self.img.height() ) )
 
         core = picpic_entities.PicPicShapeCore()
-        self.circle = picpic_shape_controlers.PicPicRect(QPoint(0, 0), QPoint(100, 100), core=core)
+        self.circle = picpic_shape_controlers.PicPicCircle(QPoint(0, 0), 150, core=core)
 
         self.start_draw = False
         self.shape = []
@@ -97,7 +96,6 @@ class View(QGraphicsView):
 
 
     def mousePressEvent(self, event):
-        print self.circle.core.name.value
         self.parent().editor.delete_attr_panel()
         if not self.start_draw:
             return QGraphicsView.mousePressEvent(self, event)
