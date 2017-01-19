@@ -2,7 +2,7 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 
 class PicSignal(QObject):
-    changed = Signal(list)
+    changed = Signal(float)
 
 class QHLine(QFrame):
     def __init__(self):
@@ -69,7 +69,7 @@ class PicPicFloat(PicPicAbstract):
         self.slider.setMaximum(100)
         self.slider.setValue(int(self.value))
         self.integer = QLineEdit(str(self.value))
-        self.integer.setValidator(QIntValidator(0, 100))
+        self.integer.setValidator(QDoubleValidator(-100.0, 100.0, 1))
         self.integer.setMaximumWidth(40)
         self.sep = QHLine()
         self.sep2 = QHLine()
@@ -84,18 +84,18 @@ class PicPicFloat(PicPicAbstract):
         self.lay.setSpacing(1)
         self.setMinimumWidth(190)
 
-        #self.setStyleSheet("color: #999999")
-
         self.slider.valueChanged.connect(self.link)
         self.integer.textChanged.connect(self.linkInt)
 
     def link(self):
         self.integer.setText(str(self.slider.value()))
         self.properties.value = float(self.integer.text())
+        self.signal.changed.emit(self.properties.value)
 
     def linkInt(self):
-        self.slider.setValue(int(self.integer.text()))
+        self.slider.setValue(float(self.integer.text()))
         self.properties.value = float(self.integer.text())
+        self.signal.changed.emit(self.properties.value)
 
 class PicPicColor(PicPicAbstract):
     def __init__(self, properties, label):

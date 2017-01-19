@@ -22,7 +22,7 @@ class PicPicShapeCore(object):
         self.over_color = Property((122,78,45,255))
         self.over_color.type = COLOR
         self.over_color.expo_order = 3
-        self.opacity = Property(0)
+        self.opacity = Property(50.0)
         self.opacity.type = FLOAT
         self.click_color = Property((120,200,255))
         self.click_color.type = COLOR
@@ -33,6 +33,11 @@ class PicPicShapeCore(object):
         self.selected = None
         self.pen_width = Property()
         self.pen_width.type = FLOAT
+        self.pen_width.expo_order = 5
+        self.scale = Property(1.0)
+        self.scale.type = FLOAT
+        self.rotate = Property(0.0)
+        self.rotate.type = FLOAT
 
 class PicPicFreeCore(PicPicShapeCore):
     def __init__(self):

@@ -31,7 +31,7 @@ class Window(QWidget):
         layout.addWidget(self.view)
         layout.addWidget(widget_right)
 
-        self.view.scene().items()[1].signal.fired.connect(self.pop)
+        self.view.scene().items()[0].signal.fired.connect(self.pop)
 
     @Slot(list)
     def pop(self, event):
@@ -60,8 +60,8 @@ class View(QGraphicsView):
     def __init__(self, parent):
         QGraphicsView.__init__(self, parent)
         self.setRenderHint(QPainter.Antialiasing)
-        # self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        # self.setResizeAnchor(QGraphicsView.AnchorViewCenter)
+        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        self.setResizeAnchor(QGraphicsView.AnchorViewCenter)
         self.setBackgroundBrush(QColor(70, 70, 70))
         self.setDragMode(QGraphicsView.RubberBandDrag)
         self.setRubberBandSelectionMode(Qt.IntersectsItemShape)
@@ -75,7 +75,8 @@ class View(QGraphicsView):
         self.bck.setOffset( -0.5 * QPointF( self.img.width(), self.img.height() ) )
 
         core = picpic_entities.PicPicShapeCore()
-        self.circle = picpic_shape_controlers.PicPicCircle(QPoint(0, 0), 150, core=core)
+        self.circle = picpic_shape_controlers.PicPicRect(QPoint(0, 0), QPoint(150, 150), core=core)
+        self.node = picpic_shape_controlers.PicPicNode(self.circle)
 
         self.start_draw = False
         self.shape = []
@@ -90,7 +91,7 @@ class View(QGraphicsView):
         self.scene_.setSceneRect(-50000, -50000, 100000, 100000)
         self.setScene(self.scene_)
         self.scene_.addItem(self.bck)
-        self.scene_.addItem(self.circle)
+        self.scene_.addItem(self.node)
 
         self.circle.core.name.value += str(len(self.scene_.items())-1)
 

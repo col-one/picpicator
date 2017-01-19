@@ -8,11 +8,50 @@ from controlers.picpic_editor_controlers import *
 class PicSignal(QObject):
     fired = Signal(list)
 
-class PicPicHandle(QGraphicsItem):
+class PicPicNode(QGraphicsItem):
     def __init__(self, item):
-        super(PicPicHandle, self).__init__()
+        super(PicPicNode, self).__init__()
+        #all flags
+        self.setFlags(
+            QGraphicsItem.ItemIsFocusable |
+            QGraphicsItem.ItemIsSelectable |
+            QGraphicsItem.ItemIsMovable |
+            QGraphicsItem.ItemSendsGeometryChanges
+        )
         self.color = QColor(0,0,0,255)
         self.item = item
+        self.item.setParentItem(self)
+
+        self.scale_attr = None
+
+        self.mtr = QTransform()
+
+    @Slot(float)
+    def scale_item(self, sx):
+        self.item.core.scale.value = sx
+        self.mtr = QTransform.fromScale(self.item.core.scale.value, self.item.core.scale.value)
+        self.mtr.rotate(self.item.core.rotate.value, Qt.ZAxis)
+        self.setTransform(self.mtr)
+
+    @Slot(float)
+    def rotate_item(self, sx):
+        self.item.core.rotate.value = sx
+        self.mtr = QTransform.fromScale(self.item.core.scale.value, self.item.core.scale.value)
+        self.mtr.rotate(self.item.core.rotate.value, Qt.ZAxis)
+        self.setTransform(self.mtr)
+
+    def mousePressEvent(self, event):
+        for widget in self.item.attr_widgets:
+            if widget.label_name == "scale":
+                self.scale_attr = widget
+                self.scale_attr.signal.changed.connect(self.scale_item)
+            if widget.label_name == "rotate":
+                self.scale_attr = widget
+                self.scale_attr.signal.changed.connect(self.rotate_item)
+        QGraphicsItem.mousePressEvent(self, event)
+
+    def mouseReleaseEvent(self, event):
+        self.item.switch_color(event)
 
 
     def boundingRect(self, *args, **kwargs):
@@ -21,28 +60,23 @@ class PicPicHandle(QGraphicsItem):
     def paint(self, painter, option, widget):
         painter.setBrush(Qt.NoBrush)
         painter.setPen(self.color)
-        painter.drawRect(self.item.bb_rect)
+        rect = copy.deepcopy(self.item.bb_rect)
+        rect.adjusted(-50,-50,50,50)
+        painter.drawRect(rect)
         painter.setBrush(QColor(255,255,255,255))
-        painter.drawRect(QRect(self.item.bb_rect.getCoords()[0], self.item.bb_rect.getCoords()[1], 10, 10))
-        painter.drawRect(QRect(self.item.bb_rect.getCoords()[2], self.item.bb_rect.getCoords()[3], -10, -10))
-        painter.drawRect(QRect(self.item.bb_rect.getCoords()[0]+self.item.bb_rect.height(), self.item.bb_rect.getCoords()[1], -10, 10))
-        painter.drawRect(QRect(self.item.bb_rect.getCoords()[0], self.item.bb_rect.getCoords()[1]+self.item.bb_rect.width(), 10, -10))
-        painter.drawRect(QRect(self.item.bb_rect.getCoords()[0]+5+self.item.bb_rect.height()/2, self.item.bb_rect.getCoords()[1], -10, 10))
-        painter.drawRect(QRect(self.item.bb_rect.getCoords()[0], self.item.bb_rect.getCoords()[1]+5+self.item.bb_rect.width()/2, 10, -10))
-        painter.drawRect(QRect(self.item.bb_rect.getCoords()[2]-5-self.item.bb_rect.height()/2, self.item.bb_rect.getCoords()[3], 10, -10))
-        painter.drawRect(QRect(self.item.bb_rect.getCoords()[2], self.item.bb_rect.getCoords()[3]-5-self.item.bb_rect.width()/2, -10, 10))
+        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[0], self.item.bb_rect.getCoords()[1], 10, 10))
+        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[2], self.item.bb_rect.getCoords()[3], -10, -10))
+        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[0]+self.item.bb_rect.height(), self.item.bb_rect.getCoords()[1], -10, 10))
+        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[0], self.item.bb_rect.getCoords()[1]+self.item.bb_rect.width(), 10, -10))
+        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[0]+5+self.item.bb_rect.height()/2, self.item.bb_rect.getCoords()[1], -10, 10))
+        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[0], self.item.bb_rect.getCoords()[1]+5+self.item.bb_rect.width()/2, 10, -10))
+        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[2]-5-self.item.bb_rect.height()/2, self.item.bb_rect.getCoords()[3], 10, -10))
+        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[2], self.item.bb_rect.getCoords()[3]-5-self.item.bb_rect.width()/2, -10, 10))
 
 
 class PicPicShape(QGraphicsItem):
     def __init__(self, core=PicPicFreeCore):
         super(PicPicShape, self).__init__()
-        #all flags
-        self.setFlags(
-            QGraphicsItem.ItemIsFocusable |
-            QGraphicsItem.ItemIsSelectable |
-            QGraphicsItem.ItemIsMovable |
-            QGraphicsItem.ItemSendsGeometryChanges
-        )
         self.signal = PicSignal()
         #attributes
         self.core=core
@@ -52,6 +86,7 @@ class PicPicShape(QGraphicsItem):
         self.core.pen_width.value = 4
         self.core.color.value = QColor(*self.core.color.value)
         self.core.over_color.value = self.core.color.value.lighter(150)
+        self.core.click_color.value = QColor(*self.core.click_color.value)
 
         self.bb_rect = QRect()
         self.hovered = False
@@ -61,13 +96,6 @@ class PicPicShape(QGraphicsItem):
         self.cc_hover_pen_width = 2
         self.cc_click_action = (PicPicAttrGen, self.core)
         self.attr_widgets = []
-        #self.blur = QGraphicsBlurEffect(5)
-
-        #handle
-        self.handle = PicPicHandle(self)
-        self.handle.setParentItem(self)
-        self.handle.setVisible(False)
-
 
         #override
         self.pen.setColor(self.core.pen_color.value)
@@ -76,34 +104,36 @@ class PicPicShape(QGraphicsItem):
         #graphicsitems attributes
         self.setAcceptHoverEvents(True)
 
+
     def boundingRect(self):
         return self.bb_rect
 
     def paint(self, painter, option, widget):
+        self.core.color.value.setAlpha(self.core.opacity.value / 100 * 255)
+        self.core.over_color.value.setAlpha(self.core.opacity.value / 100 * 255)
+        self.core.click_color.value.setAlpha(self.core.opacity.value / 100 * 255)
         painter.setBrush(self.brush)
+        self.pen.setWidth(self.core.pen_width.value)
+        painter.setPen(self.pen)
         self.scene().update()
 
     def hoverEnterEvent(self, event):
         self.hovered = True
         self.brush = self.core.over_color.value
-        #self.brush.setColor(self.core.over_color.value)
-        #self.bb_rect.adjust(-self.core.pen_width.value, -self.core.pen_width.value, self.core.pen_width.value, self.core.pen_width.value)
-
 
     def hoverLeaveEvent(self, event):
         self.hovered = False
         self.brush = self.core.color.value
-        if not self.isSelected():
-            self.handle.setVisible(False)
-        #self.bb_rect.adjust(self.core.pen_width.value, self.core.pen_width.value, -self.core.pen_width.value, -self.core.pen_width.value)
-
 
     def mousePressEvent(self, event):
         ret = self.cc_click_action[0](self.cc_click_action[1])
         self.attr_widgets = ret
         self.signal.fired.emit(self.attr_widgets)
-        self.handle.setVisible(True)
+        self.brush = self.core.click_color.value
         QGraphicsItem.mousePressEvent(self, event)
+
+    def switch_color(self, event):
+        self.brush = self.core.color.value
 
 
 class PicPicCircle(PicPicShape):
@@ -117,7 +147,6 @@ class PicPicCircle(PicPicShape):
 
     def paint(self, painter, option, widget):
         super(PicPicCircle, self).paint(painter, option, widget)
-        painter.setPen(self.pen)
         painter.drawEllipse(self.center, self.radius, self.radius)
 
 
@@ -128,11 +157,9 @@ class PicPicRect(PicPicShape):
         self.top = top
         self.rect = QRect(bottom, top)
         self.bb_rect = self.rect
-        self.core.color.value = QColor(0,255,0,255)
 
     def paint(self, painter, option, widget):
         super(PicPicRect, self).paint(painter, option, widget)
-        painter.setBrush(self.core.color.value)
         painter.drawRect(self.rect)
 
 class PicPicFreeDraw(PicPicShape):
