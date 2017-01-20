@@ -40,7 +40,6 @@ class Window(QWidget):
     def handleClearView(self):
         shape_core = picpic_entities.PicPicFreeCore()
         shape = picpic_shape_controlers.PicPicFreeDraw(core=shape_core)
-        shape.setZValue(1000)
         self.view.shape.append(shape)
         self.view.id += 1
         self.view.scene().addItem(self.view.shape[self.view.id])
@@ -75,7 +74,7 @@ class View(QGraphicsView):
         self.bck.setOffset( -0.5 * QPointF( self.img.width(), self.img.height() ) )
 
         core = picpic_entities.PicPicShapeCore()
-        self.circle = picpic_shape_controlers.PicPicRect(QPoint(0, 0), QPoint(150, 150), core=core)
+        self.circle = picpic_shape_controlers.PicPicRect(QPoint(-150, -150), QPoint(150, 150), core=core)
         self.node = picpic_shape_controlers.PicPicNode(self.circle)
 
         self.start_draw = False
@@ -92,6 +91,7 @@ class View(QGraphicsView):
         self.setScene(self.scene_)
         self.scene_.addItem(self.bck)
         self.scene_.addItem(self.node)
+        self.node.setZValue(1500.5)
 
         self.circle.core.name.value += str(len(self.scene_.items())-1)
 
