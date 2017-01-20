@@ -23,7 +23,6 @@ class PicPicNode(QGraphicsItem):
         self.item.setParentItem(self)
 
         self.scale_attr = None
-
         self.mtr = QTransform()
 
     @Slot(float)
@@ -52,18 +51,18 @@ class PicPicNode(QGraphicsItem):
 
     def mouseReleaseEvent(self, event):
         self.item.switch_color(event)
-
+        QGraphicsItem.mouseReleaseEvent(self, event)
 
     def boundingRect(self, *args, **kwargs):
-        return self.item.bb_rect
+        self.rect = copy.deepcopy(self.item.bb_rect)
+        self.rect = self.rect.adjusted(-2,-2,2,2)
+        return self.rect
 
     def paint(self, painter, option, widget):
         painter.setBrush(Qt.NoBrush)
         painter.setPen(self.color)
-        rect = copy.deepcopy(self.item.bb_rect)
-        rect.adjusted(-50,-50,50,50)
-        painter.drawRect(rect)
-        painter.setBrush(QColor(255,255,255,255))
+        painter.drawRect(self.rect)
+        # painter.setBrush(QColor(255,255,255,255))
         # painter.drawRect(QRect(self.item.bb_rect.getCoords()[0], self.item.bb_rect.getCoords()[1], 10, 10))
         # painter.drawRect(QRect(self.item.bb_rect.getCoords()[2], self.item.bb_rect.getCoords()[3], -10, -10))
         # painter.drawRect(QRect(self.item.bb_rect.getCoords()[0]+self.item.bb_rect.height(), self.item.bb_rect.getCoords()[1], -10, 10))
@@ -103,7 +102,6 @@ class PicPicShape(QGraphicsItem):
         self.brush = self.core.color.value
         #graphicsitems attributes
         self.setAcceptHoverEvents(True)
-
 
     def boundingRect(self):
         return self.bb_rect
