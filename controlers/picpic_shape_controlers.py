@@ -55,7 +55,7 @@ class PicPicNode(QGraphicsItem):
 
     def boundingRect(self, *args, **kwargs):
         self.rect = copy.deepcopy(self.item.bb_rect)
-        self.rect = self.rect.adjusted(-2,-2,2,2)
+        self.rect = self.rect.adjusted(-5,-5,5,5)
         return self.rect
 
     def paint(self, painter, option, widget):
@@ -81,11 +81,21 @@ class PicPicShape(QGraphicsItem):
         self.core=core
         self.cc_over_color = QColor(255, 255, 255, 150)
         self.cc_select_color = QColor(255, 255, 255, 100)
-        self.core.pen_color.value = QColor(*self.core.pen_color.value)
+        try:
+            self.core.pen_color.value = QColor(*self.core.pen_color.value)
+        except TypeError:
+            pass
+        try:
+            self.core.color.value = QColor(*self.core.color.value)
+        except TypeError:
+            pass
+        try:
+            self.core.click_color.value = QColor(*self.core.click_color.value)
+        except TypeError:
+            pass
+
         self.core.pen_width.value = 4
-        self.core.color.value = QColor(*self.core.color.value)
         self.core.over_color.value = self.core.color.value.lighter(150)
-        self.core.click_color.value = QColor(*self.core.click_color.value)
 
         self.bb_rect = QRect()
         self.hovered = False
