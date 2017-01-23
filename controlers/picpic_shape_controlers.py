@@ -18,7 +18,7 @@ class PicPicNode(QGraphicsItem):
             QGraphicsItem.ItemIsMovable |
             QGraphicsItem.ItemSendsGeometryChanges
         )
-        self.color = QColor(0,0,0,255)
+        self.color = QColor(250,250,250,255)
         self.item = item
         self.item.setParentItem(self)
 
@@ -59,19 +59,10 @@ class PicPicNode(QGraphicsItem):
         return self.rect
 
     def paint(self, painter, option, widget):
-        painter.setBrush(Qt.NoBrush)
-        painter.setPen(self.color)
-        painter.drawRect(self.rect)
-        # painter.setBrush(QColor(255,255,255,255))
-        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[0], self.item.bb_rect.getCoords()[1], 10, 10))
-        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[2], self.item.bb_rect.getCoords()[3], -10, -10))
-        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[0]+self.item.bb_rect.height(), self.item.bb_rect.getCoords()[1], -10, 10))
-        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[0], self.item.bb_rect.getCoords()[1]+self.item.bb_rect.width(), 10, -10))
-        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[0]+5+self.item.bb_rect.height()/2, self.item.bb_rect.getCoords()[1], -10, 10))
-        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[0], self.item.bb_rect.getCoords()[1]+5+self.item.bb_rect.width()/2, 10, -10))
-        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[2]-5-self.item.bb_rect.height()/2, self.item.bb_rect.getCoords()[3], 10, -10))
-        # painter.drawRect(QRect(self.item.bb_rect.getCoords()[2], self.item.bb_rect.getCoords()[3]-5-self.item.bb_rect.width()/2, -10, 10))
-
+        if self.isSelected():
+            painter.setBrush(Qt.NoBrush)
+            painter.setPen(self.color)
+            painter.drawRect(self.rect)
 
 class PicPicShape(QGraphicsItem):
     def __init__(self, core=PicPicFreeCore):
