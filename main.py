@@ -3,38 +3,81 @@ import copy
 from PySide.QtCore import *
 from PySide.QtGui import *
 
-from controlers import picpic_shape_controlers, picpic_create_controlers, picpic_editor_controlers, picpic_view_controlers
+from controlers import picpic_shape_controlers, picpic_create_controlers, picpic_editor_controlers, \
+    picpic_view_controlers, picpic_tabtab_controlers
 from controlers.picpic_editor_controlers import PicPicAttrGen
 from entities import picpic_entities
 
 
-class Window(QWidget):
+class Window(QMainWindow):
     def __init__(self):
-        QWidget.__init__(self)
-        create_lay = picpic_create_controlers.PicPicToolsUi()
-        color_lay = picpic_create_controlers.PicPicColorUi()
-        self.editor = picpic_editor_controlers.PicPicFrame()
-        self.scene_ = picpic_view_controlers.PicPicScene()
-        self.view = picpic_view_controlers.PicPicView(scene=self.scene_)
-        self.scene_.editor = self.editor
-        self.scene_.add_background("./Jadina_Fond.jpg")
+        QMainWindow.__init__(self)
+        self.setWindowTitle("PicPicator")
+        self.statusBar().showMessage("PicPicator is launching... OK")
+        #quit
+        self.exitAction = QAction('&Exit', self)
+        self.exitAction.setShortcut('Ctrl+Q')
+        self.exitAction.setStatusTip('Exit application')
+        self.exitAction.triggered.connect(self.close)
+        #save
+        self.saveAction = QAction('&Save', self)
+        self.saveAction.setShortcut('Ctrl+S')
+        self.saveAction.setStatusTip('Save .pic file')
+        #self.saveAction.triggered.connect(self.save)
+        #save as
+        self.saveAsAction = QAction('&Save as...', self)
+        self.saveAsAction.setShortcut('Ctrl+Shift+S')
+        self.saveAsAction.setStatusTip('Save as .pic file')
+        #self.saveAsAction.triggered.connect(self.close)
 
+        self.menubar = self.menuBar()
+        self.fileMenu = self.menubar.addMenu('&File')
+        self.fileMenu.addAction(self.saveAction)
+        self.fileMenu.addAction(self.saveAsAction)
+        self.fileMenu.addAction(self.exitAction)
+
+
+        self.create = picpic_create_controlers.PicPicToolsUi()
+        self.color = picpic_create_controlers.PicPicColorUi()
+        self.editor = picpic_editor_controlers.PicPicFrame()
+
+        self.tab = picpic_tabtab_controlers.PicPicTab()
+        self.tab.add_tab()
+
+        self.setCentralWidget(self.tab)
+
+        self.dock = QDockWidget("Tools")
+        self.dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.dock.setWidget(self.create)
+
+        self.dock_color = QDockWidget("Colors")
+        self.dock_color.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.dock_color.setWidget(self.color)
+
+        self.dock_prop = QDockWidget("Shapes Properties")
+        self.dock_prop.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
+        self.dock_prop.setWidget(self.editor)
+
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dock)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dock_color)
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dock_prop)
+
+        #
         core = picpic_entities.PicPicShapeCore()
         self.circle = picpic_shape_controlers.PicPicRect(QPoint(-150, -150), QPoint(150, 150), core=core)
         self.node = picpic_shape_controlers.PicPicNode(self.circle)
 
-        self.scene_.add_picpicitem(self.node)
-
-        #TODO implementer clean
-        widget_right = QWidget(self)
-        lay_right = QVBoxLayout(widget_right)
-        lay_right.addWidget(create_lay)
-        lay_right.addWidget(color_lay)
-        lay_right.addWidget(self.editor)
-
-        layout = QHBoxLayout(self)
-        layout.addWidget(self.view)
-        layout.addWidget(widget_right)
+        #self.scene_.add_picpicitem(self.node)
+        #
+        # widget_right = QWidget(self)
+        # lay_right = QVBoxLayout(widget_right)
+        # lay_right.addWidget(create_lay)
+        # lay_right.addWidget(color_lay)
+        # lay_right.addWidget(self.editor)
+        #
+        # layout = QHBoxLayout(self)
+        # layout.addWidget(self.view)
+        # layout.addWidget(widget_right)
 
     #     self.view.scene().items()[0].signal.fired.connect(self.pop)
     #

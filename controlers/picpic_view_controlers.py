@@ -60,3 +60,31 @@ class PicPicView(QGraphicsView):
         self.scene = scene
 
         self.setScene(self.scene)
+
+class PicPicEmptyView(QWidget):
+    def __init__(self):
+        super(PicPicEmptyView, self).__init__()
+        lay = QVBoxLayout(self)
+        self.but = QPushButton("First add a background")
+        self.but.setFixedSize(QSize(550,35))
+        lay.addWidget(self.but)
+        self.adjustSize()
+
+        self.but.clicked.connect(self.add_background)
+
+    def add_background(self):
+        tab = self.parent().parent()
+        id = tab.currentIndex()
+        tab.removeTab(id)
+        dialog = QFileDialog()
+        dialog.setNameFilter("Images (*.png *.tiff *.tga *.jpg)")
+        dialog.setViewMode(QFileDialog.Detail)
+        fileName = QFileDialog.getOpenFileName(self, "Open File", "Images (*.png *.tga *.tiff *.jpg)")
+        self.scene_ = PicPicScene()
+        self.view = PicPicView(scene=self.scene_)
+        self.scene_.editor = self.window().editor
+        self.scene_.add_background(fileName[0])
+        tab.addTab(self.view, "new tab (click to rename)")
+        tab.setCurrentIndex(id)
+
+
