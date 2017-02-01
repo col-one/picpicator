@@ -46,6 +46,13 @@ class PicPicFreeCore(PicPicShapeCore):
         self.drawing = None
         self.path = None
 
+class PicPicTabCore(object):
+    def __init__(self):
+        super(PicPicTabCore, self).__init__()
+        self.name = Property("A Tab (Double to rename)")
+        self.name.type = STRING
+        self.shapes_core = []
+
 class Property(object):
     def __init__(self, *args):
         self.valid_type = ["color", "string", "bool", "int", "float", "list"]

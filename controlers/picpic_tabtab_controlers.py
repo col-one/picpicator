@@ -59,13 +59,18 @@ class PicPicTab(QTabWidget):
         self.setTabsClosable(True)
 
         self.tab.plusClicked.connect(self.add_tab)
-        self.tabCloseRequested.connect(self.removeTab)
+        self.tabCloseRequested.connect(self.remove_tab)
 
     def add_tab(self):
         widget = picpic_view_controlers.PicPicEmptyView()
         self.addTab(widget, 'main (click to rename)')
 
-# class PicPicTab(QWidget):
+    def remove_tab(self, e):
+        if self.tab.count() == 1:
+            return
+        self.removeTab(e)
+
+    # class PicPicTab(QWidget):
 #     def __init__(self):
 #         super(PicPicTab, self).__init__()
 #         l = QVBoxLayout(self)
