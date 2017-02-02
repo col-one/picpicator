@@ -2,6 +2,7 @@ from PySide.QtCore import *
 from PySide.QtGui import *\
 
 from controlers import picpic_view_controlers
+from entities.picpic_entities import *
 
 class TabBarPlus(QTabBar):
 
@@ -51,8 +52,9 @@ class TabBarPlus(QTabBar):
             self.window().statusBar().showMessage("Tab is rename '{0}'".format(newName[0]), 2500)
 
 class PicPicTab(QTabWidget):
-    def __init__(self):
+    def __init__(self, core=PicPicTabCore):
         super(PicPicTab, self).__init__()
+        self.core = core
         self.tab = TabBarPlus()
         self.setTabBar(self.tab)
         self.setMovable(True)
@@ -61,13 +63,21 @@ class PicPicTab(QTabWidget):
         self.tab.plusClicked.connect(self.add_tab)
         self.tabCloseRequested.connect(self.remove_tab)
 
+        self.id = self.currentIndex()
+
+
     def add_tab(self):
+        self.id += 1
+        if self.id > 0:
+            self.core.append(PicTabDict())
         widget = picpic_view_controlers.PicPicEmptyView()
-        self.addTab(widget, 'main (click to rename)')
+        self.addTab(widget, self.core[self.id].name.value)
+        print self.id
 
     def remove_tab(self, e):
         if self.tab.count() == 1:
             return
+        self.id -= 1
         self.removeTab(e)
 
     # class PicPicTab(QWidget):

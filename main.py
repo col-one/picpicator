@@ -41,7 +41,10 @@ class Window(QMainWindow):
         self.color = picpic_create_controlers.PicPicColorUi()
         self.editor = picpic_editor_controlers.PicPicFrame()
 
-        self.tab = picpic_tabtab_controlers.PicPicTab()
+        self.tab_core = picpic_entities.PicPicTabCore()
+        fist_tab = picpic_entities.PicTabDict()
+        self.tab_core.append(fist_tab)
+        self.tab = picpic_tabtab_controlers.PicPicTab(core=self.tab_core)
         self.tab.add_tab()
 
         self.setCentralWidget(self.tab)

@@ -46,13 +46,6 @@ class PicPicFreeCore(PicPicShapeCore):
         self.drawing = None
         self.path = None
 
-class PicPicTabCore(object):
-    def __init__(self):
-        super(PicPicTabCore, self).__init__()
-        self.name = Property("A Tab (Double to rename)")
-        self.name.type = STRING
-        self.shapes_core = []
-
 class Property(object):
     def __init__(self, *args):
         self.valid_type = ["color", "string", "bool", "int", "float", "list"]
@@ -85,3 +78,22 @@ class Property(object):
 def generate_randcolor():
     import random
     return (random.randint(0,256), random.randint(0,256), random.randint(0,256), 255)
+
+class PicTabDict(object):
+    def __init__(self, name=Property("A Tab (dlck to rename)"), image=None, shapes=None):
+        super(PicTabDict, self).__init__()
+        self.name = name
+        self.name.type = STRING
+        self.image = image
+        if shapes == None:
+            self.shapes = []
+        else:
+            self.shapes = shapes
+
+class PicPicTabCore(list):
+    def __init__(self):
+        super(PicPicTabCore, self).__init__()
+
+    def __setitem__(self, key, value):
+        if not isinstance(value, PicTabDict):
+            raise TypeError("Value must a PicTabDict")
