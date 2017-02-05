@@ -141,13 +141,12 @@ class PicPicCircle(PicPicShape):
 
         self.center = center
         self.radius = radius
-        self.circle_rect = QRect(center.x()-radius, center.y()-radius, radius*2+center.x(), radius*2+center.y())
+        self.circle_rect = QRect(center.x()-radius, center.y()-radius, radius*2, radius*2)
         self.bb_rect = self.circle_rect
 
     def paint(self, painter, option, widget):
         super(PicPicCircle, self).paint(painter, option, widget)
         painter.drawEllipse(self.center, self.radius, self.radius)
-
 
 class PicPicRect(PicPicShape):
     def __init__(self, bottom, top, core):

@@ -2,6 +2,9 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 
 from entities import picpic_entities
+from controlers import picpic_create_controlers
+from controlers import picpic_shape_controlers
+
 
 class PicPicScene(QGraphicsScene):
     def __init__(self, editor=None):
@@ -22,7 +25,6 @@ class PicPicScene(QGraphicsScene):
         self.views()[0].setMaximumWidth(pix.width())
         self.views()[0].setMinimumWidth(pix.width())
         self.setSceneRect(self.itemsBoundingRect())
-
 
     def add_picpicitem(self, item):
         self.addItem(item)
@@ -62,6 +64,26 @@ class PicPicView(QGraphicsView):
         self.scene = scene
 
         self.setScene(self.scene)
+
+        self.active_tool = None
+        self.click_pos = None
+        self.release_pos = None
+
+    def mousePressEvent(self, event):
+        self.click_pos = self.mapToScene(event.pos())
+        QGraphicsView.mousePressEvent(self, event)
+
+    def mouseReleaseEvent(self, event):
+        self.release_pos = self.mapToScene(event.pos())
+        length = QLineF(self.release_pos, self.click_pos).length()
+        if self.active_tool == picpic_create_controlers.CIRCLE and length > 25:
+            circle_core = picpic_entities.PicPicShapeCore()
+            circle_shape = picpic_shape_controlers.PicPicCircle(self.click_pos, length, circle_core)
+            circle_node = picpic_shape_controlers.PicPicNode(circle_shape)
+            self.scene.add_picpicitem(circle_node)
+        QGraphicsView.mouseReleaseEvent(self, event)
+
+
 
 class PicPicEmptyView(QWidget):
     def __init__(self):

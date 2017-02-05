@@ -2,6 +2,9 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 import copy
 
+CIRCLE = ''
+
+
 class PicPicButton(QPushButton):
     def __init__(self, *args, **kwargs):
         super(PicPicButton, self).__init__(*args, **kwargs)
@@ -43,6 +46,7 @@ class PicPicToolsUi(QWidget):
         #attributes
         self.buttons = [self.rect_btn, self.circle_btn, self.free_btn,
                         self.btn_1, self.btn_2, self.btn_3]
+        self.active_button = False
         #laying
         self.grid_layout.addWidget(self.buttons[0], 0, 0, 0)
         self.grid_layout.addWidget(self.buttons[1], 0, 1, 0)
@@ -60,13 +64,31 @@ class PicPicToolsUi(QWidget):
         self.free_btn.clicked.connect(self.click_free_btn)
         self.btn_1.clicked.connect(self.click_btn_1)
 
+    def mousePressEvent(self, e):
+        self.info_from_click()
+        self.active_button = not self.active_button
+        self.current_view.active_tool = None
+        QWidget.mousePressEvent(self, e)
+
+    def info_from_click(self):
+        self.current_view = self.window().tab.core[self.window().tab.currentIndex()].view
+
     def click_rect_btn(self):
+        self.info_from_click()
         pass
+
     def click_circle_btn(self):
-        pass
+        self.info_from_click()
+        if not self.active_button:
+            self.current_view.active_tool = CIRCLE
+
     def click_free_btn(self):
+        self.info_from_click()
+
         pass
     def click_btn_1(self):
+        self.info_from_click()
+
         pass
 
 class PicPicColorUi(QWidget):
