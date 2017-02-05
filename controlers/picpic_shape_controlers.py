@@ -54,7 +54,7 @@ class PicPicNode(QGraphicsItem):
         QGraphicsItem.mouseReleaseEvent(self, event)
 
     def boundingRect(self, *args, **kwargs):
-        self.rect = copy.deepcopy(self.item.bb_rect)
+        self.rect = copy.deepcopy(self.item.boundingRect())
         self.rect = self.rect.adjusted(-5,-5,5,5)
         return self.rect
 
@@ -141,19 +141,19 @@ class PicPicCircle(PicPicShape):
 
         self.center = center
         self.radius = radius
-        self.circle_rect = QRect(center.x()-radius, center.y()-radius, radius*2, radius*2)
+        self.circle_rect = QRect(center, radius)
         self.bb_rect = self.circle_rect
 
     def paint(self, painter, option, widget):
         super(PicPicCircle, self).paint(painter, option, widget)
-        painter.drawEllipse(self.center, self.radius, self.radius)
+        painter.drawEllipse(self.circle_rect)
 
 class PicPicRect(PicPicShape):
     def __init__(self, bottom, top, core):
         super(PicPicRect, self).__init__(core=core)
         self.bottom = bottom
         self.top = top
-        self.rect = QRect(bottom, top)
+        self.rect = QRect(self.bottom, self.top)
         self.bb_rect = self.rect
 
     def paint(self, painter, option, widget):
@@ -165,27 +165,23 @@ class PicPicFreeDraw(PicPicShape):
         super(PicPicFreeDraw, self).__init__(core=core)
         if not type(core) == PicPicFreeCore:
             raise TypeError("core must be type PicPicFree")
-        self.core.path = QPainterPath()
-        self.core.color.value = QColor(255,255,0)
+        self.path = QPainterPath()
 
     def start_draw(self, point):
         self.core.vertex.value = point
-        self.core.path.moveTo(point)
+        self.path.moveTo(point)
 
     def add_line(self, point):
         self.core.vertex.value = point
-        self.core.path.lineTo(point)
+        self.path.lineTo(point)
 
     def end_draw(self):
-        self.core.vertex.value = self.core.path.pointAtPercent(0.0)
-        self.core.path.closeSubpath()
-        self.bb_rect = self.mapRectToScene(self.core.path.controlPointRect())
+        self.core.vertex.value = self.path.pointAtPercent(0.0)
+        self.path.closeSubpath()
+
+    def boundingRect(self):
+        return self.path.controlPointRect()
 
     def paint(self, painter, option, widget):
         super(PicPicFreeDraw, self).paint(painter, option, widget)
-        painter.setPen(Qt.NoPen)
-        if self.hovered:
-            painter.setBrush(self.core.over_color.value)
-        else:
-            painter.setBrush(self.core.color.value)
-        painter.drawPath(self.core.path)
+        painter.drawPath(self.path)

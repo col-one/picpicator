@@ -42,9 +42,6 @@ class PicPicShapeCore(object):
 class PicPicFreeCore(PicPicShapeCore):
     def __init__(self):
         super(PicPicFreeCore, self).__init__()
-        self.start_point = None
-        self.drawing = None
-        self.path = None
 
 class Property(object):
     def __init__(self, *args):
@@ -52,7 +49,7 @@ class Property(object):
         if len(args) == 1:
             self._x = args[0]
         else:
-            self._x = args
+            self._x = list(args)
         self._type = None
         self.expo = True
         self.expo_order = 10

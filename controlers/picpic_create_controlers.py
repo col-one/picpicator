@@ -2,7 +2,12 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 import copy
 
-CIRCLE = ''
+from entities import picpic_entities
+from controlers import picpic_shape_controlers
+
+CIRCLE = 'Circle Tool'
+SQUARE = 'Square Tool'
+FREE = 'Free Tool'
 
 
 class PicPicButton(QPushButton):
@@ -75,21 +80,33 @@ class PicPicToolsUi(QWidget):
 
     def click_rect_btn(self):
         self.info_from_click()
-        pass
+        if not self.active_button:
+            self.current_view.active_tool = SQUARE
+            self.active_button = not self.active_button
 
     def click_circle_btn(self):
         self.info_from_click()
         if not self.active_button:
             self.current_view.active_tool = CIRCLE
+            self.active_button = not self.active_button
 
     def click_free_btn(self):
         self.info_from_click()
+        if not self.active_button:
+            self.current_view.active_tool = FREE
+            self.active_button = not self.active_button
+            free_core = picpic_entities.PicPicFreeCore()
+            self.current_view.free_shape = picpic_shape_controlers.PicPicFreeDraw(free_core)
+            self.current_view.free_node = picpic_shape_controlers.PicPicNode(self.current_view.free_shape)
 
-        pass
     def click_btn_1(self):
         self.info_from_click()
-
         pass
+
+    def uncheck_all(self):
+        for btn in self.buttons:
+            btn.setChecked(False)
+        self.active_button = not self.active_button
 
 class PicPicColorUi(QWidget):
     def __init__(self):

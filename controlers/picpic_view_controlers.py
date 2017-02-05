@@ -48,6 +48,14 @@ class PicPicScene(QGraphicsScene):
                 self.removeItem(item)
                 del item
             self.editor.delete_attr_panel()
+        if event.key() == Qt.Key_Return:
+            if self.views()[0].active_tool == picpic_create_controlers.FREE:
+                self.views()[0].free_shape.end_draw()
+            self.views()[0].active_tool = None
+            self.views()[0].window().create.uncheck_all()
+            #HACK for update
+            self.views()[0].free_shape.setPos(self.views()[0].free_shape.pos()+QPointF(0.1,0.1))
+            self.views()[0].free_shape.update()
 
 class PicPicView(QGraphicsView):
     def __init__(self, scene=None):
@@ -69,18 +77,34 @@ class PicPicView(QGraphicsView):
         self.click_pos = None
         self.release_pos = None
 
+        self.free_shape = None
+        self.free_core = None
+
     def mousePressEvent(self, event):
         self.click_pos = self.mapToScene(event.pos())
+        if self.active_tool == picpic_create_controlers.FREE:
+            if not self.free_node in self.scene.items():
+                self.scene.add_picpicitem(self.free_node)
+            if len(self.free_shape.core.vertex.value) == 0:
+                self.free_shape.start_draw(self.click_pos)
+            else:
+                self.free_shape.add_line(self.click_pos)
         QGraphicsView.mousePressEvent(self, event)
 
     def mouseReleaseEvent(self, event):
         self.release_pos = self.mapToScene(event.pos())
         length = QLineF(self.release_pos, self.click_pos).length()
-        if self.active_tool == picpic_create_controlers.CIRCLE and length > 25:
-            circle_core = picpic_entities.PicPicShapeCore()
-            circle_shape = picpic_shape_controlers.PicPicCircle(self.click_pos, length, circle_core)
-            circle_node = picpic_shape_controlers.PicPicNode(circle_shape)
-            self.scene.add_picpicitem(circle_node)
+        if len(self.scene.selectedItems()) == 0:
+            if self.active_tool == picpic_create_controlers.CIRCLE and length > 25:
+                circle_core = picpic_entities.PicPicShapeCore()
+                circle_shape = picpic_shape_controlers.PicPicCircle(self.click_pos.toPoint(), self.release_pos.toPoint(), circle_core)
+                circle_node = picpic_shape_controlers.PicPicNode(circle_shape)
+                self.scene.add_picpicitem(circle_node)
+            if self.active_tool == picpic_create_controlers.SQUARE and length > 25:
+                square_core = picpic_entities.PicPicShapeCore()
+                square_shape = picpic_shape_controlers.PicPicRect(self.click_pos.toPoint(), self.release_pos.toPoint(), square_core)
+                square_node = picpic_shape_controlers.PicPicNode(square_shape)
+                self.scene.add_picpicitem(square_node)
         QGraphicsView.mouseReleaseEvent(self, event)
 
 
