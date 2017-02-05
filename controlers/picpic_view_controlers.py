@@ -1,6 +1,8 @@
 from PySide.QtCore import *
 from PySide.QtGui import *
 
+from entities import picpic_entities
+
 class PicPicScene(QGraphicsScene):
     def __init__(self, editor=None):
         super(PicPicScene, self).__init__()
@@ -65,7 +67,7 @@ class PicPicEmptyView(QWidget):
     def __init__(self):
         super(PicPicEmptyView, self).__init__()
         lay = QVBoxLayout(self)
-        self.but = QPushButton("First add a background")
+        self.but = QPushButton("First, add a background")
         self.but.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         lay.addWidget(self.but)
         self.adjustSize()
@@ -73,20 +75,5 @@ class PicPicEmptyView(QWidget):
         self.but.clicked.connect(self.add_background)
 
     def add_background(self):
-        tab = self.parent().parent()
-        id = tab.currentIndex()
-        dialog = QFileDialog()
-        dialog.setNameFilter("Images (*.png *.tiff *.tga *.jpg)")
-        dialog.setViewMode(QFileDialog.Detail)
-        fileName = QFileDialog.getOpenFileName(self, "Open File", "Images (*.png *.tga *.tiff *.jpg)")
-        if fileName[0] != '':
-            print fileName
-            tab.removeTab(id)
-            self.scene_ = PicPicScene()
-            self.view = PicPicView(scene=self.scene_)
-            self.scene_.editor = self.window().editor
-            self.scene_.add_background(fileName[0])
-            tab.addTab(self.view, "new tab (click to rename)")
-            tab.setCurrentIndex(id)
-
-
+        tab = self.window().tab
+        tab.add_tab_background(window=self.window())

@@ -60,36 +60,39 @@ class PicPicTab(QTabWidget):
         self.setMovable(True)
         self.setTabsClosable(True)
 
-        self.tab.plusClicked.connect(self.add_tab)
+        self.tab.plusClicked.connect(self.add_tab_background)
         self.tabCloseRequested.connect(self.remove_tab)
-
         self.id = self.currentIndex()
 
-
-    def add_tab(self):
+    def add_tab(self, pic_dict):
         self.id += 1
-        if self.id > 0:
-            self.core.append(PicTabDict())
-        widget = picpic_view_controlers.PicPicEmptyView()
-        self.addTab(widget, self.core[self.id].name.value)
-        print self.id
+        self.core.append(pic_dict)
+        self.addTab(self.core[-1].view, self.core[self.id].name.value)
+        self.adjustSize()
 
     def remove_tab(self, e):
         if self.tab.count() == 1:
             return
         self.id -= 1
+        del self.core[self.currentIndex()]
         self.removeTab(e)
+        self.window.adjustSize()
 
-    # class PicPicTab(QWidget):
-#     def __init__(self):
-#         super(PicPicTab, self).__init__()
-#         l = QVBoxLayout(self)
-#         d = CustomTabWidget()
-#         l.addWidget(d)
 
-# import sys
-# app = QApplication(sys.argv)
-# d = PicPicTab()
-# d.show()
-# sys.exit(app.exec_())
-
+    def add_tab_background(self, window=None):
+        #tab = self.window().tab
+        dialog = QFileDialog()
+        dialog.setNameFilter("Images (*.png *.tiff *.tga *.jpg)")
+        dialog.setViewMode(QFileDialog.Detail)
+        fileName = QFileDialog.getOpenFileName(self, "Open File", "Images (*.png *.tga *.tiff *.jpg)")
+        if fileName[0] != '':
+            self.scene_ = picpic_view_controlers.PicPicScene()
+            self.view = picpic_view_controlers.PicPicView(scene=self.scene_)
+            if window:
+                self.window = window
+            self.scene_.editor = self.window.editor
+            self.scene_.add_background(fileName[0])
+            pic_core_dict = PicTabDict(view=self.view)
+            pic_core_dict.image.value = fileName
+            self.add_tab(pic_core_dict)
+            self.window.setCentralWidget(self)

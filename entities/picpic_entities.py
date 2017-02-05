@@ -80,11 +80,13 @@ def generate_randcolor():
     return (random.randint(0,256), random.randint(0,256), random.randint(0,256), 255)
 
 class PicTabDict(object):
-    def __init__(self, name=Property("A Tab (dlck to rename)"), image=None, shapes=None):
+    def __init__(self, name=Property("A Tab (dlck to rename)"), image=Property(""), shapes=None, view=None):
         super(PicTabDict, self).__init__()
         self.name = name
         self.name.type = STRING
         self.image = image
+        self.image.type = STRING
+        self.view = view
         if shapes == None:
             self.shapes = []
         else:

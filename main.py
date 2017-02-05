@@ -42,12 +42,10 @@ class Window(QMainWindow):
         self.editor = picpic_editor_controlers.PicPicFrame()
 
         self.tab_core = picpic_entities.PicPicTabCore()
-        fist_tab = picpic_entities.PicTabDict()
-        self.tab_core.append(fist_tab)
         self.tab = picpic_tabtab_controlers.PicPicTab(core=self.tab_core)
-        self.tab.add_tab()
+        #self.tab.add_empty_tab()
 
-        self.setCentralWidget(self.tab)
+        self.setCentralWidget(picpic_view_controlers.PicPicEmptyView())
 
         self.dock = QDockWidget("Tools")
         self.dock.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
