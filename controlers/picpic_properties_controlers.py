@@ -18,7 +18,6 @@ class PicPicColorPicker(QColorDialog):
         self.setOption(QColorDialog.DontUseNativeDialog)
         self.currentColorChanged.connect(self.change_color)
         self.color = QColor(255,255,255)
-        self.show()
 
     def implementation_change(self):
         pass
@@ -121,6 +120,7 @@ class PicPicColor(PicPicAbstract):
 
     def send_signal(self):
         color_pick = PicPicColorPicker(self)
+        color_pick.show()
         def set_color(color):
             self.properties.value = color
             self.color_hex = color.name()

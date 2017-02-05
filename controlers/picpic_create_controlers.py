@@ -3,7 +3,7 @@ from PySide.QtGui import *
 import copy
 
 from entities import picpic_entities
-from controlers import picpic_shape_controlers
+from controlers import picpic_shape_controlers, picpic_properties_controlers
 
 CIRCLE = 'Circle Tool'
 SQUARE = 'Square Tool'
@@ -135,8 +135,14 @@ class PicPicPenBtn(QGraphicsItem):
         self.rect = rect
         self.plain_rect = copy.deepcopy(self.rect)
         self.plain_rect.adjust(+30,+30,-30,-30)
-        self.color = QColor(255,200,0,255)
-        self.plain_color = QColor(255,255,255,255)
+        self.color = QColor(35,45,200)
+        self.plain_color =  QColor(255,255,255)
+        self.color_dial = picpic_properties_controlers.PicPicColorPicker(self.window())
+        self.color_dial.setCurrentColor(self.color)
+        self.color_dial.currentColorChanged.connect(self.change_color)
+
+    def change_color(self, color):
+        self.color = color
 
     def boundingRect(self, *args, **kwargs):
         return self.rect
@@ -147,6 +153,11 @@ class PicPicPenBtn(QGraphicsItem):
         painter.drawRect(self.rect)
         painter.setBrush(self.plain_color)
         painter.drawRect(self.plain_rect)
+
+    def mousePressEvent(self, e):
+        self.color_dial.show()
+        QGraphicsItem.mousePressEvent(self, e)
+
 
 class PicPicBrushBtn(QGraphicsItem):
     def __init__(self, rect):
@@ -156,6 +167,12 @@ class PicPicBrushBtn(QGraphicsItem):
         self.plain_rect.adjust(+30, +30, -30, -30)
         self.color = QColor(04, 200, 0, 255)
         self.plain_color = QColor(255, 255, 255, 255)
+        self.color_dial = picpic_properties_controlers.PicPicColorPicker(self.window())
+        self.color_dial.setCurrentColor(self.color)
+        self.color_dial.currentColorChanged.connect(self.change_color)
+
+    def change_color(self, color):
+        self.color = color
 
     def boundingRect(self, *args, **kwargs):
         return self.rect
@@ -167,10 +184,12 @@ class PicPicBrushBtn(QGraphicsItem):
         painter.setBrush(self.color)
         painter.drawRect(self.plain_rect)
 
+    def mousePressEvent(self, e):
+        self.color_dial.show()
+        QGraphicsItem.mousePressEvent(self, e)
 
 
 
-#
 # if __name__ == '__main__':
 #
 #     import sys
