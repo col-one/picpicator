@@ -12,7 +12,9 @@ class PicPicScene(QGraphicsScene):
         self.setSceneRect(-50000, -50000, 100000, 100000)
         self.background =  QGraphicsPixmapItem()
         self.items_ = []
+        self.widget_ = []
         self.editor = editor
+        self.selected_button = None
 
     def add_background(self, img):
         pix = QPixmap(img)
@@ -31,6 +33,12 @@ class PicPicScene(QGraphicsScene):
         self.items_.append(item)
         item.item.core.name.value += str(len(self.items_))
         item.item.signal.fired.connect(self.pop)
+
+    def add_picpicwidget(self, item):
+        self.addWidget(item)
+        self.widget_.append(item)
+        item.core.name.value += str(len(self.widget_))
+        item.signal.fired.connect(self.pop)
 
     @Slot(list)
     def pop(self, event):
@@ -99,13 +107,27 @@ class PicPicView(QGraphicsView):
                 circle_core = picpic_entities.PicPicShapeCore()
                 circle_shape = picpic_shape_controlers.PicPicCircle(self.click_pos.toPoint(), self.release_pos.toPoint(), circle_core)
                 circle_node = picpic_shape_controlers.PicPicNode(circle_shape)
+                circle_shape.change_color(self.window().color.brush_btn.color, self.window().color.pen_btn.color)
                 self.scene.add_picpicitem(circle_node)
 
             if self.active_tool == picpic_create_controlers.SQUARE and length > 25:
                 square_core = picpic_entities.PicPicShapeCore()
                 square_shape = picpic_shape_controlers.PicPicRect(self.click_pos.toPoint(), self.release_pos.toPoint(), square_core)
                 square_node = picpic_shape_controlers.PicPicNode(square_shape)
+                square_shape.change_color(self.window().color.brush_btn.color, self.window().color.pen_btn.color)
                 self.scene.add_picpicitem(square_node)
+
+            if self.active_tool == picpic_create_controlers.TEXT and length > 25:
+                text_core = picpic_entities.PicPicTextCore()
+                text_shape = picpic_shape_controlers.PicPicText(self.click_pos.toPoint(), self.release_pos.toPoint(), text_core)
+                text_node = picpic_shape_controlers.PicPicNode(text_shape)
+                text_shape.change_color(self.window().color.brush_btn.color, self.window().color.brush_btn.color)
+                self.scene.add_picpicitem(text_node)
+
+            if self.active_tool == picpic_create_controlers.BUTTON and length > 25:
+                button_core = picpic_entities.PicPicButtonCore()
+                button_shape = picpic_shape_controlers.PicPicButton(self.click_pos.toPoint(), self.release_pos.toPoint(), button_core)
+                self.scene.add_picpicwidget(button_shape)
 
         QGraphicsView.mouseReleaseEvent(self, event)
 

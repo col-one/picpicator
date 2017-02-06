@@ -8,7 +8,8 @@ from controlers import picpic_shape_controlers, picpic_properties_controlers
 CIRCLE = 'Circle Tool'
 SQUARE = 'Square Tool'
 FREE = 'Free Tool'
-
+TEXT = 'Text Tool'
+BUTTON = 'Button Tool'
 
 class PicPicButton(QPushButton):
     def __init__(self, *args, **kwargs):
@@ -45,12 +46,14 @@ class PicPicToolsUi(QWidget):
         self.circle_btn.setIcon(QIcon("icones/circle-outline.png"))
         self.free_btn = PicPicButton()
         self.free_btn.setIcon(QIcon("icones/pencil.png"))
-        self.btn_1 = PicPicButton(".", self)
-        self.btn_2 = PicPicButton(".", self)
-        self.btn_3 = PicPicButton(".", self)
-        #attributes
+        self.text_btn = PicPicButton()
+        self.text_btn.setIcon(QIcon("icones/text.png"))
+        self.btn_btn = PicPicButton()
+        self.btn_btn.setIcon(QIcon("icones/add.png"))
+        self.layer_btn = PicPicButton()
+        self.layer_btn.setIcon(QIcon("icones/layers.png"))        #attributes
         self.buttons = [self.rect_btn, self.circle_btn, self.free_btn,
-                        self.btn_1, self.btn_2, self.btn_3]
+                        self.text_btn, self.btn_btn, self.layer_btn]
         self.active_button = False
         #laying
         self.grid_layout.addWidget(self.buttons[0], 0, 0, 0)
@@ -67,7 +70,8 @@ class PicPicToolsUi(QWidget):
         self.rect_btn.clicked.connect(self.click_rect_btn)
         self.circle_btn.clicked.connect(self.click_circle_btn)
         self.free_btn.clicked.connect(self.click_free_btn)
-        self.btn_1.clicked.connect(self.click_btn_1)
+        self.text_btn.clicked.connect(self.click_text_btn)
+        self.btn_btn.clicked.connect(self.click_btn_btn)
 
     def mousePressEvent(self, e):
         self.info_from_click()
@@ -99,9 +103,17 @@ class PicPicToolsUi(QWidget):
             self.current_view.free_shape = picpic_shape_controlers.PicPicFreeDraw(free_core)
             self.current_view.free_node = picpic_shape_controlers.PicPicNode(self.current_view.free_shape)
 
-    def click_btn_1(self):
+    def click_text_btn(self):
         self.info_from_click()
-        pass
+        if not self.active_button:
+            self.current_view.active_tool = TEXT
+            self.active_button = not self.active_button
+
+    def click_btn_btn(self):
+        self.info_from_click()
+        if not self.active_button:
+            self.current_view.active_tool = BUTTON
+            self.active_button = not self.active_button
 
     def uncheck_all(self):
         for btn in self.buttons:
@@ -134,7 +146,7 @@ class PicPicPenBtn(QGraphicsItem):
         super(PicPicPenBtn, self).__init__()
         self.rect = rect
         self.plain_rect = copy.deepcopy(self.rect)
-        self.plain_rect.adjust(+30,+30,-30,-30)
+        self.plain_rect.adjust(+15,+15,-15,-15)
         self.color = QColor(35,45,200)
         self.plain_color =  QColor(255,255,255)
         self.color_dial = picpic_properties_controlers.PicPicColorPicker(self.window())
@@ -164,7 +176,7 @@ class PicPicBrushBtn(QGraphicsItem):
         super(PicPicBrushBtn, self).__init__()
         self.rect = rect
         self.plain_rect = copy.deepcopy(self.rect)
-        self.plain_rect.adjust(+30, +30, -30, -30)
+        self.plain_rect.adjust(+15, +15, -15, -15)
         self.color = QColor(04, 200, 0, 255)
         self.plain_color = QColor(255, 255, 255, 255)
         self.color_dial = picpic_properties_controlers.PicPicColorPicker(self.window())

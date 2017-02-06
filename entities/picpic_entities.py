@@ -31,7 +31,7 @@ class PicPicShapeCore(object):
         self.vertex.type = LIST
         self.vertex.expo = False
         self.selected = None
-        self.pen_width = Property()
+        self.pen_width = Property(1)
         self.pen_width.type = FLOAT
         self.pen_width.expo_order = 5
         self.scale = Property(1.0)
@@ -42,6 +42,30 @@ class PicPicShapeCore(object):
 class PicPicFreeCore(PicPicShapeCore):
     def __init__(self):
         super(PicPicFreeCore, self).__init__()
+
+class PicPicTextCore(PicPicShapeCore):
+    def __init__(self):
+        super(PicPicTextCore, self).__init__()
+        self.size = Property(2)
+        self.size.type = FLOAT
+        self.size.expo_order = 0.25
+        self.text = Property("Text")
+        self.text.type = STRING
+        self.text.expo_order = 0.2
+        self.pen_color.expo = False
+
+class PicPicButtonCore(PicPicShapeCore):
+    def __init__(self):
+        super(PicPicButtonCore, self).__init__()
+        self.name.value = "Button"
+        self.color = None
+        self.pen_color = None
+        self.click_color = None
+        self.opacity = None
+        self.over_color = None
+        self.pen_width = None
+        self.rotate = None
+        self.scale = None
 
 class Property(object):
     def __init__(self, *args):

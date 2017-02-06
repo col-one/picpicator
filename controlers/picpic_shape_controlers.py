@@ -104,6 +104,13 @@ class PicPicShape(QGraphicsItem):
         #graphicsitems attributes
         self.setAcceptHoverEvents(True)
 
+    def change_color(self, brush, pen):
+        self.core.color.value = brush
+        self.core.pen_color.value = pen
+        self.pen.setColor(self.core.pen_color.value)
+        self.pen.setWidth(self.core.pen_width.value)
+        self.brush = self.core.color.value
+
     def boundingRect(self):
         return self.bb_rect
 
@@ -185,3 +192,54 @@ class PicPicFreeDraw(PicPicShape):
     def paint(self, painter, option, widget):
         super(PicPicFreeDraw, self).paint(painter, option, widget)
         painter.drawPath(self.path)
+
+class PicPicText(PicPicShape):
+    def __init__(self, bottom, top, core):
+        super(PicPicText, self).__init__(core=core)
+        self.bottom = bottom
+        self.top = top
+        self.rect = QRect(self.bottom, self.top)
+        self.bb_rect = self.rect
+
+    def paint(self, painter, option, widget):
+        super(PicPicText, self).paint(painter, option, widget)
+        self.font = painter.font()
+        self.font.setPointSize(self.font.pointSize() * self.core.size.value)
+        painter.setFont(self.font)
+        painter.drawText(self.rect, self.core.text.value)
+
+    def hoverEnterEvent(self, event):
+        self.hovered = True
+        self.pen = QPen(self.core.over_color.value)
+
+    def hoverLeaveEvent(self, event):
+        self.hovered = False
+        self.pen = QPen(self.core.color.value)
+
+    def mousePressEvent(self, event):
+        super(PicPicText, self).mousePressEvent(event)
+        self.pen = QPen(self.core.click_color.value)
+
+class PicPicButton(QPushButton):
+    def __init__(self, bottom, top, core):
+        super(PicPicButton, self).__init__()
+        self.signal = PicSignal()
+        self.core = core
+        self.bottom = bottom
+        self.top = top
+        self.setText(self.core.name.value)
+        self.rect = QRect(self.bottom, self.top)
+        self.setGeometry(self.rect)
+        self.cc_click_action = (PicPicAttrGen, self.core)
+        self.attr_widgets = []
+        self.clicked.connect(self.click_button)
+
+    def click_button(self):
+        ret = self.cc_click_action[0](self.cc_click_action[1])
+        self.attr_widgets = ret
+        self.signal.fired.emit(self.attr_widgets)
+
+    def paintEvent(self, *args, **kwargs):
+        super(PicPicButton, self).paintEvent(*args, **kwargs)
+        self.setText(self.core.name.value)
+        self.update()
