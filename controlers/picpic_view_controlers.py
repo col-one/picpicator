@@ -99,7 +99,6 @@ class PicPicView(QGraphicsView):
                 circle_core = picpic_entities.PicPicShapeCore()
                 circle_shape = picpic_shape_controlers.PicPicCircle(self.click_pos.toPoint(), self.release_pos.toPoint(), circle_core)
                 circle_node = picpic_shape_controlers.PicPicNode(circle_shape)
-                circle_shape.update_color(self.window().color.brush_btn.color, self.window().color.pen_btn.color)
                 self.scene.add_picpicitem(circle_node)
 
             if self.active_tool == picpic_create_controlers.SQUARE and length > 25:
