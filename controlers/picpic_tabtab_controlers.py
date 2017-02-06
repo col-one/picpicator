@@ -82,9 +82,8 @@ class PicPicTab(QTabWidget):
     def add_tab_background(self, window=None):
         #tab = self.window().tab
         dialog = QFileDialog()
-        dialog.setNameFilter("Images (*.png *.tiff *.tga *.jpg)")
         dialog.setViewMode(QFileDialog.Detail)
-        fileName = QFileDialog.getOpenFileName(self, "Open File", "Images (*.png *.tga *.tiff *.jpg)")
+        fileName = QFileDialog.getOpenFileName(self, "Open File", "Image")
         if fileName[0] != '':
             self.scene_ = picpic_view_controlers.PicPicScene()
             self.view = picpic_view_controlers.PicPicView(scene=self.scene_)

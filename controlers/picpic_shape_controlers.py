@@ -85,7 +85,7 @@ class PicPicShape(QGraphicsItem):
         except TypeError:
             pass
 
-        self.core.pen_width.value = 4
+        self.core.pen_width.value = self.core.pen_width.value
         self.core.over_color.value = self.core.color.value.lighter(150)
 
         self.bb_rect = QRect()
