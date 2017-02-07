@@ -31,14 +31,27 @@ class PicPicScene(QGraphicsScene):
     def add_picpicitem(self, item):
         self.addItem(item)
         self.items_.append(item)
+        item.prepareGeometryChange()
         item.item.core.name.value += str(len(self.items_))
         item.item.signal.fired.connect(self.pop)
 
     def add_picpicwidget(self, item):
         self.addWidget(item)
-        self.widget_.append(item)
+        self.proxy = item.graphicsProxyWidget()
+        self.proxy.setFlag(
+            QGraphicsItem.ItemIsMovable, True
+        )
+        self.proxy.prepareGeometryChange()
+        self.widget_.append(self.proxy)
         item.core.name.value += str(len(self.widget_))
         item.signal.fired.connect(self.pop)
+        item.signal.deleted.connect(self.delete_button)
+
+    @Slot(list)
+    def delete_button(self, event):
+        for pro in self.widget_:
+            if event[0] == pro:
+                self.removeItem(pro)
 
     @Slot(list)
     def pop(self, event):
@@ -112,7 +125,8 @@ class PicPicView(QGraphicsView):
 
             if self.active_tool == picpic_create_controlers.SQUARE and length > 25:
                 square_core = picpic_entities.PicPicShapeCore()
-                square_shape = picpic_shape_controlers.PicPicRect(self.click_pos.toPoint(), self.release_pos.toPoint(), square_core)
+                #square_shape = picpic_shape_controlers.PicPicRect(self.click_pos.toPoint(), self.release_pos.toPoint(), square_core)
+                square_shape = picpic_shape_controlers.PicPicLayer(self.click_pos.toPoint(), self.release_pos.toPoint(), square_core)
                 square_node = picpic_shape_controlers.PicPicNode(square_shape)
                 square_shape.change_color(self.window().color.brush_btn.color, self.window().color.pen_btn.color)
                 self.scene.add_picpicitem(square_node)
@@ -126,8 +140,8 @@ class PicPicView(QGraphicsView):
 
             if self.active_tool == picpic_create_controlers.BUTTON and length > 25:
                 button_core = picpic_entities.PicPicButtonCore()
-                button_shape = picpic_shape_controlers.PicPicButton(self.click_pos.toPoint(), self.release_pos.toPoint(), button_core)
-                self.scene.add_picpicwidget(button_shape)
+                self.button_shape = picpic_shape_controlers.PicPicButton(self.click_pos.toPoint(), self.release_pos.toPoint(), button_core)
+                self.scene.add_picpicwidget(self.button_shape)
 
         QGraphicsView.mouseReleaseEvent(self, event)
 

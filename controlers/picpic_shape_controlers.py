@@ -7,6 +7,8 @@ from controlers.picpic_editor_controlers import *
 
 class PicSignal(QObject):
     fired = Signal(list)
+    deleted = Signal(list)
+
 
 class PicPicNode(QGraphicsItem):
     def __init__(self, item):
@@ -243,3 +245,30 @@ class PicPicButton(QPushButton):
         super(PicPicButton, self).paintEvent(*args, **kwargs)
         self.setText(self.core.name.value)
         self.update()
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.RightButton:
+            proxy = self.graphicsProxyWidget()
+            self.signal.deleted.emit([proxy])
+            del proxy
+        QPushButton.mousePressEvent(self, event)
+
+    def mouseMoveEvent(self, event):
+        self.move(self.mapToParent(event.pos()))
+        QPushButton.mouseMoveEvent(self, event)
+        
+class PicPicLayer(PicPicShape):
+    def __init__(self, bottom, top, core):
+        super(PicPicLayer, self).__init__(core=core)
+        self.bottom = bottom
+        self.top = top
+        self.rect = QRect(self.bottom, self.top)
+        self.bb_rect = self.rect
+        self.adjust_rect = self.rect.adjusted(self.rect.width()+5,0,self.rect.width()/4.0,0)
+    
+    def paint(self, painter, option, widget):
+        super(PicPicLayer, self).paint(painter, option, widget)
+        painter.drawRoundedRect(self.rect, 10, 10)
+        painter.drawRoundedRect(self.adjust_rect, 10, 10)
+        painter.drawRoundedRect(self.adjust_rect.adjusted(self.adjust_rect.width() + 5, 0, self.rect.width() / 4.0, 0), 10, 10)
+        self.bb_rect = QRect(self.rect.topLeft(), self.adjust_rect.bottomRight())
