@@ -10,6 +10,7 @@ SQUARE = 'Square Tool'
 FREE = 'Free Tool'
 TEXT = 'Text Tool'
 BUTTON = 'Button Tool'
+LAYER = 'Layer Tool'
 
 class PicPicButton(QPushButton):
     def __init__(self, *args, **kwargs):
@@ -72,6 +73,7 @@ class PicPicToolsUi(QWidget):
         self.free_btn.clicked.connect(self.click_free_btn)
         self.text_btn.clicked.connect(self.click_text_btn)
         self.btn_btn.clicked.connect(self.click_btn_btn)
+        self.layer_btn.clicked.connect(self.click_layer_btn)
 
     def mousePressEvent(self, e):
         self.info_from_click()
@@ -115,10 +117,17 @@ class PicPicToolsUi(QWidget):
             self.current_view.active_tool = BUTTON
             self.active_button = not self.active_button
 
+    def click_layer_btn(self):
+        self.info_from_click()
+        if not self.active_button:
+            self.current_view.active_tool = LAYER
+            self.active_button = not self.active_button
+
+
     def uncheck_all(self):
         for btn in self.buttons:
             btn.setChecked(False)
-        self.active_button = not self.active_button
+        self.active_button = False
 
 class PicPicColorUi(QWidget):
     def __init__(self):

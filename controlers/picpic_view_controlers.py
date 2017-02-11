@@ -72,11 +72,12 @@ class PicPicScene(QGraphicsScene):
         if event.key() == Qt.Key_Return:
             if self.views()[0].active_tool == picpic_create_controlers.FREE:
                 self.views()[0].free_shape.end_draw()
+                # HACK for update
+                self.views()[0].free_shape.setPos(self.views()[0].free_shape.pos() + QPointF(0.1, 0.1))
+                self.views()[0].free_shape.update()
             self.views()[0].active_tool = None
             self.views()[0].window().create.uncheck_all()
-            #HACK for update
-            self.views()[0].free_shape.setPos(self.views()[0].free_shape.pos()+QPointF(0.1,0.1))
-            self.views()[0].free_shape.update()
+
 
 class PicPicView(QGraphicsView):
     def __init__(self, scene=None):
@@ -105,6 +106,7 @@ class PicPicView(QGraphicsView):
         self.click_pos = self.mapToScene(event.pos())
         if self.active_tool == picpic_create_controlers.FREE:
             if not self.free_node in self.scene.items():
+                self.free_shape.change_color(self.window().color.brush_btn.color, self.window().color.pen_btn.color)
                 self.scene.add_picpicitem(self.free_node)
             if len(self.free_shape.core.vertex.value) == 0:
                 self.free_shape.start_draw(self.click_pos)
@@ -125,11 +127,17 @@ class PicPicView(QGraphicsView):
 
             if self.active_tool == picpic_create_controlers.SQUARE and length > 25:
                 square_core = picpic_entities.PicPicShapeCore()
-                #square_shape = picpic_shape_controlers.PicPicRect(self.click_pos.toPoint(), self.release_pos.toPoint(), square_core)
-                square_shape = picpic_shape_controlers.PicPicLayer(self.click_pos.toPoint(), self.release_pos.toPoint(), square_core)
+                square_shape = picpic_shape_controlers.PicPicRect(self.click_pos.toPoint(), self.release_pos.toPoint(), square_core)
                 square_node = picpic_shape_controlers.PicPicNode(square_shape)
                 square_shape.change_color(self.window().color.brush_btn.color, self.window().color.pen_btn.color)
                 self.scene.add_picpicitem(square_node)
+
+            if self.active_tool == picpic_create_controlers.LAYER and length > 25:
+                layer_core = picpic_entities.PicPicShapeCore()
+                layer_shape = picpic_shape_controlers.PicPicLayer(self.click_pos.toPoint(), self.release_pos.toPoint(), layer_core)
+                layer_node = picpic_shape_controlers.PicPicNode(layer_shape)
+                layer_shape.change_color(self.window().color.brush_btn.color, self.window().color.pen_btn.color)
+                self.scene.add_picpicitem(layer_node)
 
             if self.active_tool == picpic_create_controlers.TEXT and length > 25:
                 text_core = picpic_entities.PicPicTextCore()
