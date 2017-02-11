@@ -31,7 +31,7 @@ class PicPicShapeCore(object):
         self.vertex.type = LIST
         self.vertex.expo = False
         self.selected = None
-        self.pen_width = Property(1)
+        self.pen_width = Property(0.1)
         self.pen_width.type = FLOAT
         self.pen_width.expo_order = 5
         self.scale = Property(1.0)
@@ -112,6 +112,8 @@ class PicTabDict(object):
             self.shapes = []
         else:
             self.shapes = shapes
+        self.layer = None
+        self.wrapper = None
 
 class PicPicTabCore(list):
     def __init__(self):

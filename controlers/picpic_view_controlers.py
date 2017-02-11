@@ -15,6 +15,7 @@ class PicPicScene(QGraphicsScene):
         self.widget_ = []
         self.editor = editor
         self.selected_button = None
+        self.picpic_dict = None
 
     def add_background(self, img):
         pix = QPixmap(img)
@@ -133,11 +134,15 @@ class PicPicView(QGraphicsView):
                 self.scene.add_picpicitem(square_node)
 
             if self.active_tool == picpic_create_controlers.LAYER and length > 25:
-                layer_core = picpic_entities.PicPicShapeCore()
-                layer_shape = picpic_shape_controlers.PicPicLayer(self.click_pos.toPoint(), self.release_pos.toPoint(), layer_core)
-                layer_node = picpic_shape_controlers.PicPicNode(layer_shape)
-                layer_shape.change_color(self.window().color.brush_btn.color, self.window().color.pen_btn.color)
-                self.scene.add_picpicitem(layer_node)
+                # layer_core = picpic_entities.PicPicShapeCore()
+                # layer_shape = picpic_shape_controlers.PicPicLayer(QPoint(-self.scene.background.pixmap().width()/2.0, self.scene.background.pixmap().height()), QPoint(self.scene.background.pixmap().width()/2.0, self.scene.background.pixmap().height()-15), layer_core)
+                # layer_node = picpic_shape_controlers.PicPicNode(layer_shape)
+                # layer_shape.change_color(self.window().color.brush_btn.color, self.window().color.pen_btn.color)
+                # self.scene.add_picpicitem(layer_node)
+                # layer_shape.update()
+                w = self.window().tab.widget(self.window().tab.currentIndex())
+                print w
+                print w.id
 
             if self.active_tool == picpic_create_controlers.TEXT and length > 25:
                 text_core = picpic_entities.PicPicTextCore()
@@ -168,3 +173,18 @@ class PicPicEmptyView(QWidget):
     def add_background(self):
         tab = self.window().tab
         tab.add_tab_background(window=self.window())
+
+class PicPicWrapper(QWidget):
+    def __init__(self, view):
+        super(PicPicWrapper, self).__init__()
+        self.view = view
+        self.layout = QVBoxLayout(self)
+        self.layers_widget = QWidget()
+        self.layers_layout = QHBoxLayout(self.layers_widget)
+        self.layout.addWidget(self.layers_widget)
+        self.layout.addWidget(self.view)
+        self.id = 0
+        self.setContentsMargins(0,0,0,0)
+        self.layers_layout.setContentsMargins(0,0,0,0)
+        self.layout.setContentsMargins(0,0,0,0)
+

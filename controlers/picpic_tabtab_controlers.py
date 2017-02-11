@@ -67,7 +67,8 @@ class PicPicTab(QTabWidget):
     def add_tab(self, pic_dict):
         self.id += 1
         self.core.append(pic_dict)
-        self.addTab(self.core[-1].view, self.core[self.id].name.value)
+        self.addTab(self.core[-1].wrapper, self.core[self.id].name.value)
+        self.core[-1].wrapper.id = self.id
         self.adjustSize()
 
     def remove_tab(self, e):
@@ -85,13 +86,17 @@ class PicPicTab(QTabWidget):
         dialog.setViewMode(QFileDialog.Detail)
         fileName = QFileDialog.getOpenFileName(self, "Open File", "Image")
         if fileName[0] != '':
+
             self.scene_ = picpic_view_controlers.PicPicScene()
             self.view = picpic_view_controlers.PicPicView(scene=self.scene_)
+            self.wid = picpic_view_controlers.PicPicWrapper(view=self.view)
             if window:
                 self.window = window
             self.scene_.editor = self.window.editor
             self.scene_.add_background(fileName[0])
             pic_core_dict = PicTabDict(view=self.view)
             pic_core_dict.image.value = fileName
+            pic_core_dict.wrapper = self.wid
+            self.scene_.picpic_dict = pic_core_dict
             self.add_tab(pic_core_dict)
             self.window.setCentralWidget(self)
