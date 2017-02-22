@@ -262,7 +262,7 @@ class PicPicLayer(PicPicShape):
         super(PicPicLayer, self).__init__(core=core)
         self.bottom = bottom
         self.top = top
-        self.rect = QRect(self.bottom, self.top)
+        self.rect = QRect(0,0, 250,50)
         self.bb_rect = self.rect
         self.adjust_rect = self.rect.adjusted(self.rect.width()+5,0,self.rect.width()/4.0,0)
     
